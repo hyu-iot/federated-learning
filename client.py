@@ -91,12 +91,12 @@ print("Done!")
 
 
 # Saving Models
-torch.save(model.state_dict(), "model.pth")
+torch.save(model.state_dict(), "./output/model.pth")
 print("Saved Pytorch Model State to model.pth")
 
 # Loading Models
 model = NN()
-model.load_state_dict(torch.load("model.pth"))
+model.load_state_dict(torch.load("./output/model.pth"))
 
 classes = [
     "T-shirt/top",
@@ -118,3 +118,8 @@ with torch.no_grad():
     print(f"Pred: {[pred]}")
     predicted, actual = classes[pred[0].argmax(0)], classes[y]
     print(f"Predicted: {predicted}, Actual: {actual}")
+
+
+print("Model's state_dict:")
+for param_tensor in model.state_dict():
+    print(param_tensor, "\t", model.state_dict()[param_tensor].size())
