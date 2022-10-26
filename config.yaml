@@ -1,0 +1,16 @@
+global_config:
+  device: "cpu"
+  id: 1
+---
+data_config:
+  data_path: "./data/"
+  dataset: "FEMNIST"
+---
+train_config:
+  criterion: torch.nn.CrossEntropyLoss
+  optimizer: torch.optim.SGD
+  batch_size: 64
+  epoch: 5
+---
+optim_config:
+  lr: 0.01
