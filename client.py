@@ -9,7 +9,9 @@ from model import NN
 
 import yaml
 import datetime
-
+import socket
+import tqdm
+import os
 
 class Client:
 
