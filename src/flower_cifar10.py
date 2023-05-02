@@ -30,6 +30,11 @@ from flwr.common import Metrics
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 save_path = "../result/best_ckpt.pth"
 result_path = "../result/result.csv"
+# General
+NUM_CLIENTS = 10
+BATCH_SIZE = 128
+num_rounds = 100
+
 
 print(
     f"Training on {DEVICE} using PyTorch {torch.__version__} and Flower {fl.__version__}"
@@ -55,13 +60,6 @@ class Net(nn.Module):
         return x
 
 
-# General
-NUM_CLIENTS = 10
-BATCH_SIZE = 128
-num_rounds = 100
-
-save_path = "../result/best_ckpt.pth"
-result_path = "../result/result.csv"
 
 
 def load_datasets():
@@ -110,14 +108,9 @@ def load_datasets():
 trainloader, testloader, trainloaders, valloaders = load_datasets()
 
 
-def train(net, trainloader, epochs=1):
+def train(net, trainloader, criterion, optimizer, scheduler, epochs=1):
     """Train the network on the training set."""
     net.train()
-
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.01,
-                        momentum=0.9, weight_decay=5e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
     for epoch in range(epochs):
 
@@ -132,12 +125,11 @@ def train(net, trainloader, epochs=1):
         scheduler.step()
 
 
-def test(net, testloader):
+def test(net, testloader, criterion):
     """Evaluate the network on the entire test set."""
     
     net.eval()
     test_loss, correct, total = 0, 0, 0    
-    criterion = nn.CrossEntropyLoss()
 
     pred = torch.Tensor([])
     target = torch.Tensor([])
@@ -186,11 +178,10 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
 
 best_acc = 0
-for epoch in range(1, 101):
+for epoch in range(1, num_rounds + 1):
     print(f"Epoch: {epoch}")
-    train(net, trainloader)
-    test_loss, metrics = test(net, testloader)
-    scheduler.step()
+    train(net, trainloader, criterion, optimizer, scheduler, epochs=1)
+    test_loss, metrics = test(net, testloader, criterion)
     if epoch % 10 == 0:
         print(f"[Epoch {epoch}]", end="")
         for k, v in metrics.items():
@@ -217,7 +208,7 @@ for epoch in range(1, 101):
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-loss, metrics = test(net, testloader)
+loss, metrics = test(net, testloader, criterion)
 print(f"Final test set performance: ")
 for k, v in metrics.items(): print(f"{k}: {v}")
 
@@ -249,12 +240,17 @@ class FlowerClient(fl.client.NumPyClient):
 
     def fit(self, parameters, config):
         set_parameters(self.net, parameters)
-        train(self.net, self.trainloader, epochs=1)
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.SGD(net.parameters(), lr=0.01,
+                            momentum=0.9, weight_decay=5e-4)
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)        
+        train(self.net, self.trainloader, criterion, optimizer, scheduler, epochs=1)
         return get_parameters(self.net), len(self.trainloader), {}
     
     def evaluate(self, parameters, config):
         set_parameters(self.net, parameters)
-        loss, metrics = test(self.net, self.valloader)
+        criterion = nn.CrossEntropyLoss()
+        loss, metrics = test(self.net, self.valloader, criterion)
         return float(loss), len(self.valloader), metrics
 
 
@@ -277,11 +273,12 @@ def evaluate(
     server_round: int, parameters: fl.common.NDArrays, config: Dict[str, fl.common.Scalar]
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
 
+    criterion = nn.CrossEntropyLoss()
     net = Net().to(DEVICE)
     #net = ResNet50().to(DEVICE)
     set_parameters(net, parameters)
     net = net.to(DEVICE)
-    loss, metrics = test(net, testloader)
+    loss, metrics = test(net, testloader, criterion)
     
     return loss, metrics # The return type must be (loss, metric tuple) form
 
@@ -401,7 +398,6 @@ fedyogi = fl.server.strategy.FedYogi(
 )
 
 
-
 # Specify client resources if you need GPU (defaults to 1 CPU and 0 GPU)
 client_resources = None
 if DEVICE.type == "cuda":
@@ -446,4 +442,4 @@ for sname, strategy in strategies.items():
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-df_final.to_csv('../result/result.csv', index=False)
+df_final.to_csv(result_path, index=False)
