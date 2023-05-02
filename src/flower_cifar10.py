@@ -24,6 +24,9 @@ import flwr as fl
 from flwr.common import Metrics
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+save_path = "../result/best_ckpt.pth"
+result_path = "../result/result.csv"
+
 print(
     f"Training on {DEVICE} using PyTorch {torch.__version__} and Flower {fl.__version__}"
 )
@@ -69,8 +72,14 @@ transform_test = transforms.Compose([
 trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
 testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
 
-print(len(trainset), len(testset))
+trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
+testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=True)
 
+print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
+print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
+
+
+print(f"Make federated dataset...")
 li_trainset = [torch.empty([0, 3, 32, 32]) for _ in range(10)]
 labels = [[] for _ in range(10)]
 
@@ -80,12 +89,10 @@ for x, label in trainset:
     
 labels = [torch.tensor(x) for x in labels]
 
-
 d_train = [torch.empty([0, 3, 32, 32]) for _ in range(NUM_CLIENTS)]
 d_train_labels = [torch.tensor([], dtype=int) for _ in range(NUM_CLIENTS)]
 ds_clients = []         # dataset for each client
 dl_clients = []         # dataloader for each client
-
 
 for ds, label in zip(li_trainset, labels):
     indices = torch.randperm(5000)
@@ -109,13 +116,9 @@ for i in range(NUM_CLIENTS):
     ds_clients.append(ds_client)
     dl_clients.append(dl_client)
 
-testloader = DataLoader(
-    testset,
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-)
 
 print(len(ds_clients[0]), len(dl_clients[0]))
+
 
 def train(net, trainloader, epochs=1):
     """Train the network on the training set."""
@@ -162,6 +165,57 @@ def test(net, testloader):
 
     return test_loss, accuracy
 
+
+
+df_final = pd.DataFrame()
+
+#######################
+# Centralized Setting #
+#######################
+print("Experiment on centralized manner.")
+net = Net().to(DEVICE)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.01,
+                      momentum=0.9, weight_decay=5e-4)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
+
+best_acc = 0
+for epoch in range(1, 101):
+    print(f"[Centralized] Epoch: {epoch}")
+    train(net, trainloader, 1)
+    loss, accuracy = test(net, testloader)
+    scheduler.step()
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch}: validation loss {loss}, accuracy {accuracy}")
+    if best_acc < accuracy:
+        print(f'Saving...(epoch {epoch})')
+
+        state = {
+            'net': net.state_dict(),
+            'acc': accuracy,
+            'epoch': epoch,
+        }
+        torch.save(state, save_path)
+        best_acc = accuracy
+    
+    df_result = pd.DataFrame()
+    df_result['round'] = epoch,
+    df_result['strategy'] = 'Central',
+    df_result['c_loss'] = loss,
+    df_result['c_accuracy'] = accuracy,
+    df_result['d_accuracy'] = 0.0
+
+    df_final = pd.concat([df_final, df_result], axis=0)
+
+loss, accuracy = test(net, testloader)
+print(f"Final test set performance:\n\tloss {loss}\n\taccuracy {accuracy}")
+
+
+
+#####################
+# Federated Setting #
+#####################
 def get_parameters(net) -> List[np.ndarray]:
     return [val.cpu().numpy() for _, val in net.state_dict().items()]
 
@@ -338,8 +392,6 @@ client_resources = None
 if DEVICE.type == "cuda":
     client_resources = {"num_gpus": 1}
 
-
-df_final = pd.DataFrame()
 strategies = {
     'FedAvg': fedavg,
     'FedAvgM': fedavgM,
@@ -352,6 +404,7 @@ strategies = {
     'FedYogi': fedyogi,
 }
 
+print("Experiment on federated manner.")
 for sname, strategy in strategies.items():
     print(f"{sname} simulation")
 
@@ -378,4 +431,4 @@ for sname, strategy in strategies.items():
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-df_final.to_csv('./log.csv', index=False)
+df_final.to_csv('../result/result.csv', index=False)
