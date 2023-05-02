@@ -20,8 +20,12 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split, TensorDataset
 from torchvision.datasets import CIFAR10
 
+from sklearn.metrics import f1_score, precision_score, recall_score
+
 import flwr as fl
 from flwr.common import Metrics
+
+
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 save_path = "../result/best_ckpt.pth"
@@ -56,68 +60,54 @@ NUM_CLIENTS = 10
 BATCH_SIZE = 128
 num_rounds = 100
 
-
-transform_train = transforms.Compose([
-    transforms.RandomCrop(32, padding=4),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-])
-
-transform_test = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-])
-
-trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
-testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
-
-trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
-testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=True)
-
-print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
-print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
+save_path = "../result/best_ckpt.pth"
+result_path = "../result/result.csv"
 
 
-print(f"Make federated dataset...")
-li_trainset = [torch.empty([0, 3, 32, 32]) for _ in range(10)]
-labels = [[] for _ in range(10)]
+def load_datasets():
+    # Download and transform CIFAR-10 (train and test)
 
-for x, label in trainset:
-    labels[label].append(label)
-    li_trainset[label] = torch.cat((li_trainset[label], x[None, :]), dim=0)
-    
-labels = [torch.tensor(x) for x in labels]
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
 
-d_train = [torch.empty([0, 3, 32, 32]) for _ in range(NUM_CLIENTS)]
-d_train_labels = [torch.tensor([], dtype=int) for _ in range(NUM_CLIENTS)]
-ds_clients = []         # dataset for each client
-dl_clients = []         # dataloader for each client
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
 
-for ds, label in zip(li_trainset, labels):
-    indices = torch.randperm(5000)
-    ds = ds[indices]
-    label = label[indices]
-    num_data = 5000 // NUM_CLIENTS
-    for i in range(NUM_CLIENTS):
-        d_train[i] = torch.cat((d_train[i], ds[i*num_data : (i+1)*num_data]), dim=0)
-        d_train_labels[i] = torch.cat((d_train_labels[i], label[i*num_data : (i+1)*num_data]))
+    trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
+    testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
 
-for i in range(NUM_CLIENTS):
-    indices = torch.randperm(5000)
-    d_train[i] = d_train[i][indices]
-    d_train_labels[i] = d_train_labels[i][indices]
-    ds_client = TensorDataset(d_train[i], d_train_labels[i])
-    dl_client = DataLoader(
-        ds_client,
-        batch_size=BATCH_SIZE,
-        shuffle=True,
-    )
-    ds_clients.append(ds_client)
-    dl_clients.append(dl_client)
+    trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
+    testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=True)
 
+    # Split training set into `num_clients` partitions to simulate different local datasets
+    partition_size = len(trainset) // NUM_CLIENTS
+    lengths = [partition_size] * NUM_CLIENTS
+    datasets = random_split(trainset, lengths, torch.Generator().manual_seed(42))
 
-print(len(ds_clients[0]), len(dl_clients[0]))
+    # Split each partition into train/val and create DataLoader
+    trainloaders = []
+    valloaders = []
+    for ds in datasets:
+        len_val = len(ds) // 10  # 10 % validation set
+        len_train = len(ds) - len_val
+        lengths = [len_train, len_val]
+        ds_train, ds_val = random_split(ds, lengths, torch.Generator().manual_seed(42))
+        trainloaders.append(DataLoader(ds_train, batch_size=32, shuffle=True))
+        valloaders.append(DataLoader(ds_val, batch_size=32))
+    testloader = DataLoader(testset, batch_size=32)
+
+    print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
+    print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
+    return trainloader, testloader, trainloaders, valloaders
+
+#trainloaders, valloaders, testloader = load_datasets(divide=False)
+trainloader, testloader, trainloaders, valloaders = load_datasets()
 
 
 def train(net, trainloader, epochs=1):
@@ -146,9 +136,11 @@ def test(net, testloader):
     """Evaluate the network on the entire test set."""
     
     net.eval()
-    test_loss, correct, total = 0, 0, 0
-    
+    test_loss, correct, total = 0, 0, 0    
     criterion = nn.CrossEntropyLoss()
+
+    pred = torch.Tensor([])
+    target = torch.Tensor([])
 
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
@@ -159,12 +151,16 @@ def test(net, testloader):
             _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
-    
+            pred = torch.cat([pred, predicted.cpu()], dim=0)
+            target = torch.cat([target, targets.cpu()], dim=0)
+
     test_loss /= len(testloader)
     accuracy = correct / total
+    recall = recall_score(pred, target, average='macro')
+    precision = precision_score(pred, target, average='macro')
+    f1 = f1_score(pred, target, average='macro')
 
-    return test_loss, accuracy
-
+    return test_loss, {"loss": test_loss, "accuracy": accuracy, "recall": recall, "precision": precision, "f1_score": f1}
 
 
 df_final = pd.DataFrame()
@@ -173,43 +169,57 @@ df_final = pd.DataFrame()
 # Centralized Setting #
 #######################
 print("Experiment on centralized manner.")
-net = Net().to(DEVICE)
 
+if (os.path.exists(result_path)):
+    df_final = pd.read_csv(result_path)
+    removeIndex = df_final[df_final['strategy'] == 'Central'].index
+    df_final.drop(removeIndex, inplace=True)
+else:
+    df_final = pd.DataFrame()
+
+
+net = Net().to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.01,
                       momentum=0.9, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
+
 best_acc = 0
 for epoch in range(1, 101):
-    print(f"[Centralized] Epoch: {epoch}")
-    train(net, trainloader, 1)
-    loss, accuracy = test(net, testloader)
+    print(f"Epoch: {epoch}")
+    train(net, trainloader)
+    test_loss, metrics = test(net, testloader)
     scheduler.step()
     if epoch % 10 == 0:
-        print(f"Epoch {epoch}: validation loss {loss}, accuracy {accuracy}")
-    if best_acc < accuracy:
+        print(f"[Epoch {epoch}]", end="")
+        for k, v in metrics.items():
+            print(f"{k}: {v}", end=" ")
+        print()
+    if best_acc < metrics['accuracy']:
         print(f'Saving...(epoch {epoch})')
-
         state = {
             'net': net.state_dict(),
-            'acc': accuracy,
+            'acc': metrics['accuracy'],
             'epoch': epoch,
         }
         torch.save(state, save_path)
-        best_acc = accuracy
+        best_acc = metrics['accuracy']
     
     df_result = pd.DataFrame()
     df_result['round'] = epoch,
     df_result['strategy'] = 'Central',
-    df_result['c_loss'] = loss,
-    df_result['c_accuracy'] = accuracy,
+    for k, v in metrics.items():
+        df_result[f"c_{k}"] = v
+    # df_result['c_loss'] = test_loss,
+    # df_result['c_accuracy'] = metrics['accuracy'],
     df_result['d_accuracy'] = 0.0
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-loss, accuracy = test(net, testloader)
-print(f"Final test set performance:\n\tloss {loss}\n\taccuracy {accuracy}")
+loss, metrics = test(net, testloader)
+print(f"Final test set performance: ")
+for k, v in metrics.items(): print(f"{k}: {v}")
 
 
 
@@ -244,8 +254,9 @@ class FlowerClient(fl.client.NumPyClient):
     
     def evaluate(self, parameters, config):
         set_parameters(self.net, parameters)
-        loss, accuracy = test(self.net, self.valloader)
-        return float(loss), len(self.valloader), {"accuracy": float(accuracy)}
+        loss, metrics = test(self.net, self.valloader)
+        return float(loss), len(self.valloader), metrics
+
 
 def client_fn(cid: str) -> FlowerClient:
     """Create a Flower client representing a single organization."""
@@ -257,10 +268,8 @@ def client_fn(cid: str) -> FlowerClient:
     # Load data (CIFAR-10)
     # Note: each client gets a different trainloader/valloader, so each client 
     # will train and evaluate on their own unique data
-    trainloader = dl_clients[int(cid)]
-    #valloader = valloaders[int(cid)]
-    valloader = testloader
-
+    trainloader = trainloaders[int(cid)]
+    valloader = valloaders[int(cid)]
     # Create a single Flower client representing a single organization
     return FlowerClient(net, trainloader, valloader)
 
@@ -272,17 +281,23 @@ def evaluate(
     #net = ResNet50().to(DEVICE)
     set_parameters(net, parameters)
     net = net.to(DEVICE)
-    loss, accuracy = test(net, testloader)
+    loss, metrics = test(net, testloader)
     
-    return loss, {"loss": loss, "accuracy": accuracy} # The return type must be (loss, metric tuple) form
+    return loss, metrics # The return type must be (loss, metric tuple) form
+
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
-    # Multiply accuracy of each client by number of examples used
-    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
-    examples = [num_examples for num_examples, _ in metrics]
+
+    averages = {}
+    targets = ["accuracy", "recall", "precision", "f1_score"]
+
+    total_examples = sum([num_examples for num_examples, _ in metrics])
+    for target in targets:
+        target_distributed = [num_examples * m[target] for num_examples, m in metrics]
+        averages[target] = sum(target_distributed) / total_examples
     
     # Aggregate and return custom metric (weighted average)
-    return {"accuracy": sum(accuracies) / sum(examples)}
+    return averages
 
 
 fedavg = fl.server.strategy.FedAvg(
