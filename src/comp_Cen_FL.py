@@ -316,112 +316,26 @@ fedavg = fl.server.strategy.FedAvg(
     initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(net_pretrained)),
 )
 
-fedavgM = fl.server.strategy.FedAvgM(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-qfedavg = fl.server.strategy.QFedAvg(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-ftfedavg = fl.server.strategy.FaultTolerantFedAvg(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-fedopt = fl.server.strategy.FedOpt(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-fedprox = fl.server.strategy.FedProx(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-    proximal_mu=0.1,
-)
-
-fedadagrad = fl.server.strategy.FedAdagrad(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-fedadam = fl.server.strategy.FedAdam(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-fedyogi = fl.server.strategy.FedYogi(
-    fraction_fit=1.0,
-    fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
-    evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
-    evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
-)
-
-
 # Specify client resources if you need GPU (defaults to 1 CPU and 0 GPU)
 client_resources = None
 if DEVICE.type == "cuda":
     client_resources = {"num_gpus": 1}
 
+# strategies = {
+#     'FedAvg': fedavg,
+#     'FedAvgM': fedavgM,
+#     'QFedAvg': qfedavg,
+#     'FaultTolerantFedAvg': ftfedavg,
+#     'FedOpt': fedopt,
+#     'FedProx': fedprox,
+#     'FedAdagrad': fedadagrad,
+#     'FedAdam': fedadam,
+#     'FedYogi': fedyogi,
+# }
 strategies = {
     'FedAvg': fedavg,
-    'FedAvgM': fedavgM,
-    'QFedAvg': qfedavg,
-    'FaultTolerantFedAvg': ftfedavg,
-    'FedOpt': fedopt,
-    'FedProx': fedprox,
-    'FedAdagrad': fedadagrad,
-    'FedAdam': fedadam,
-    'FedYogi': fedyogi,
 }
+
 
 print("Experiment on federated manner.")
 for sname, strategy in strategies.items():
