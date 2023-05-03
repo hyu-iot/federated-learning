@@ -27,13 +27,15 @@ from flwr.common import Metrics
 
 
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-save_path = "../result/best_ckpt.pth"
-result_path = "../result/result.csv"
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # General
 NUM_CLIENTS = 10
 BATCH_SIZE = 128
 num_rounds = 100
+num_pretrains = 10000
+pretrain_path = f"../result/best_pretrain_ckpt_{num_pretrains}.pth"
+result_path = "../result/result.csv"
 
 
 print(
@@ -80,13 +82,18 @@ def load_datasets():
     trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
     testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
 
+
     trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
     testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=True)
 
+
+    ds_pre, ds_remain = random_split(trainset, [num_pretrains, len(trainset) - num_pretrains], torch.Generator().manual_seed(42))
+    preloader = DataLoader(ds_pre, batch_size=BATCH_SIZE, shuffle=True)
+
     # Split training set into `num_clients` partitions to simulate different local datasets
-    partition_size = len(trainset) // NUM_CLIENTS
+    partition_size = len(ds_remain) // NUM_CLIENTS
     lengths = [partition_size] * NUM_CLIENTS
-    datasets = random_split(trainset, lengths, torch.Generator().manual_seed(42))
+    datasets = random_split(ds_remain, lengths, torch.Generator().manual_seed(42))
 
     # Split each partition into train/val and create DataLoader
     trainloaders = []
@@ -102,10 +109,10 @@ def load_datasets():
 
     print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
     print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
-    return trainloader, testloader, trainloaders, valloaders
+    return trainloader, testloader, preloader, trainloaders, valloaders
 
 #trainloaders, valloaders, testloader = load_datasets(divide=False)
-trainloader, testloader, trainloaders, valloaders = load_datasets()
+trainloader, testloader, preloader, trainloaders, valloaders = load_datasets()
 
 
 def train(net, trainloader, criterion, optimizer, epochs=1):
@@ -172,12 +179,12 @@ else:
 net = Net().to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.01,
-                      momentum=0.9, weight_decay=5e-4)
+                      momentum=0.5)
 
 best_acc = 0
 for epoch in range(1, num_rounds + 1):
     print(f"Epoch: {epoch}")
-    train(net, trainloader, criterion, optimizer, epochs=1)
+    train(net, preloader, criterion, optimizer, epochs=1)
     test_loss, metrics = test(net, testloader, criterion)
     if epoch % 10 == 0:
         print(f"[Epoch {epoch}]", end="")
@@ -191,7 +198,7 @@ for epoch in range(1, num_rounds + 1):
             'acc': metrics['accuracy'],
             'epoch': epoch,
         }
-        torch.save(state, save_path)
+        torch.save(state, pretrain_path)
         best_acc = metrics['accuracy']
     
     df_result = pd.DataFrame()
@@ -209,6 +216,9 @@ loss, metrics = test(net, testloader, criterion)
 print(f"Final test set performance: ")
 for k, v in metrics.items(): print(f"{k}: {v}")
 
+
+net_pretrained = Net()
+net_pretrained.load_state_dict(torch.load(pretrain_path)['net'])
 
 
 #####################
@@ -239,7 +249,7 @@ class FlowerClient(fl.client.NumPyClient):
         set_parameters(self.net, parameters)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(), lr=0.01,
-                            momentum=0.9, weight_decay=5e-4)
+                            momentum=0.5)
         train(self.net, self.trainloader, criterion, optimizer, epochs=1)
         return get_parameters(self.net), len(self.trainloader), {}
     
@@ -293,6 +303,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return averages
 
 
+
 fedavg = fl.server.strategy.FedAvg(
     fraction_fit=1.0,
     fraction_evaluate=0.5,
@@ -301,7 +312,8 @@ fedavg = fl.server.strategy.FedAvg(
     min_available_clients=10,
     evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
     evaluate_fn=evaluate,   # evaluate global model
-    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
+    #initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
+    initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(net_pretrained)),
 )
 
 fedavgM = fl.server.strategy.FedAvgM(

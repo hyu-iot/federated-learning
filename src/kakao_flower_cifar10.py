@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from typing import List, Tuple, Dict, Optional
 import os
+import argparse
 import sys
 import time
 import math
@@ -18,6 +19,7 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split, TensorDataset
+from torch.utils.tensorboard import SummaryWriter
 from torchvision.datasets import CIFAR10
 
 from sklearn.metrics import f1_score, precision_score, recall_score
@@ -25,6 +27,12 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 import flwr as fl
 from flwr.common import Metrics
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--output_dir', type=str, required=True)
+args = parser.parse_args()
+log_dir = os.path.join(args.output_dir, 'log')
+model_path = os.path.join(args.output_dir, 'model.pt')
 
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -172,7 +180,7 @@ else:
 net = Net().to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.01,
-                      momentum=0.9, weight_decay=5e-4)
+                      momentum=0.5)
 
 best_acc = 0
 for epoch in range(1, num_rounds + 1):
@@ -191,7 +199,8 @@ for epoch in range(1, num_rounds + 1):
             'acc': metrics['accuracy'],
             'epoch': epoch,
         }
-        torch.save(state, save_path)
+        #torch.save(state, save_path)
+        torch.jit.save(torch.jit.script(net), model_path)
         best_acc = metrics['accuracy']
     
     df_result = pd.DataFrame()
@@ -399,17 +408,21 @@ client_resources = None
 if DEVICE.type == "cuda":
     client_resources = {"num_gpus": 1}
 
+# strategies = {
+#     'FedAvg': fedavg,
+#     'FedAvgM': fedavgM,
+#     'QFedAvg': qfedavg,
+#     'FaultTolerantFedAvg': ftfedavg,
+#     'FedOpt': fedopt,
+#     'FedProx': fedprox,
+#     'FedAdagrad': fedadagrad,
+#     'FedAdam': fedadam,
+#     'FedYogi': fedyogi,
+# }
 strategies = {
     'FedAvg': fedavg,
-    'FedAvgM': fedavgM,
-    'QFedAvg': qfedavg,
-    'FaultTolerantFedAvg': ftfedavg,
-    'FedOpt': fedopt,
-    'FedProx': fedprox,
-    'FedAdagrad': fedadagrad,
-    'FedAdam': fedadam,
-    'FedYogi': fedyogi,
 }
+
 
 print("Experiment on federated manner.")
 for sname, strategy in strategies.items():
@@ -438,4 +451,7 @@ for sname, strategy in strategies.items():
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-df_final.to_csv(result_path, index=False)
+
+writer = SummaryWriter(log_dir=log_dir)
+writer.add_text('result', df_final.to_string(index=False))
+writer.close()
