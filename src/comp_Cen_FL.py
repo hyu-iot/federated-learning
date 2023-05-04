@@ -36,6 +36,8 @@ num_rounds = 100
 num_pretrains = 10000
 pretrain_path = f"../result/best_pretrain_ckpt_{num_pretrains}.pth"
 result_path = "../result/result.csv"
+fl_scales = [0.25, 0.5, 1, 2, 4]
+idx_fl_scale = 0
 
 
 print(
@@ -90,29 +92,36 @@ def load_datasets():
     ds_pre, ds_remain = random_split(trainset, [num_pretrains, len(trainset) - num_pretrains], torch.Generator().manual_seed(42))
     preloader = DataLoader(ds_pre, batch_size=BATCH_SIZE, shuffle=True)
 
-    # Split training set into `num_clients` partitions to simulate different local datasets
-    partition_size = len(ds_remain) // NUM_CLIENTS
-    lengths = [partition_size] * NUM_CLIENTS
-    datasets = random_split(ds_remain, lengths, torch.Generator().manual_seed(42))
 
-    # Split each partition into train/val and create DataLoader
-    trainloaders = []
-    valloaders = []
-    for ds in datasets:
-        len_val = len(ds) // 10  # 10 % validation set
-        len_train = len(ds) - len_val
-        lengths = [len_train, len_val]
-        ds_train, ds_val = random_split(ds, lengths, torch.Generator().manual_seed(42))
-        trainloaders.append(DataLoader(ds_train, batch_size=32, shuffle=True))
-        valloaders.append(DataLoader(ds_val, batch_size=32))
-    testloader = DataLoader(testset, batch_size=32)
+    dl_clients = [{'scale': scale, 'train':[], 'val':[]} for scale in fl_scales]
+    for i, fs in enumerate(fl_scales):
+        num_data = int(fs * num_pretrains)
+        ds_client, _ = random_split(ds_remain, [num_data, len(ds_remain) - num_data], torch.Generator().manual_seed(42))
+
+        # Split training set into `num_clients` partitions to simulate different local datasets
+        partition_size = len(ds_client) // NUM_CLIENTS
+        lengths = [partition_size] * NUM_CLIENTS
+        datasets = random_split(ds_client, lengths, torch.Generator().manual_seed(42))
+
+        # Split each partition into train/val and create DataLoader
+        dl_trains = []
+        dl_vals = []
+        
+        for ds in datasets:
+            len_val = len(ds) // 10  # 10 % validation set
+            len_train = len(ds) - len_val
+            lengths = [len_train, len_val]
+            ds_train, ds_val = random_split(ds, lengths, torch.Generator().manual_seed(42))
+            dl_clients[i]['train'].append(DataLoader(ds_train, batch_size=32, shuffle=True))
+            dl_clients[i]['val'].append(DataLoader(ds_val, batch_size=32))
+
 
     print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
     print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
-    return trainloader, testloader, preloader, trainloaders, valloaders
+    return trainloader, testloader, preloader, dl_clients
 
-#trainloaders, valloaders, testloader = load_datasets(divide=False)
-trainloader, testloader, preloader, trainloaders, valloaders = load_datasets()
+
+trainloader, testloader, preloader, dl_clients = load_datasets()
 
 
 def train(net, trainloader, criterion, optimizer, epochs=1):
@@ -204,11 +213,12 @@ for epoch in range(1, num_rounds + 1):
     df_result = pd.DataFrame()
     df_result['round'] = epoch,
     df_result['strategy'] = 'Central',
+    df_result['fl_scale'] = 0.0
     for k, v in metrics.items():
         df_result[f"c_{k}"] = v
-    # df_result['c_loss'] = test_loss,
-    # df_result['c_accuracy'] = metrics['accuracy'],
+
     df_result['d_accuracy'] = 0.0
+    
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
@@ -262,6 +272,7 @@ class FlowerClient(fl.client.NumPyClient):
 
 def client_fn(cid: str) -> FlowerClient:
     """Create a Flower client representing a single organization."""
+    global idx_fl_scale
 
     # Load model
     net = Net().to(DEVICE)
@@ -270,8 +281,11 @@ def client_fn(cid: str) -> FlowerClient:
     # Load data (CIFAR-10)
     # Note: each client gets a different trainloader/valloader, so each client 
     # will train and evaluate on their own unique data
-    trainloader = trainloaders[int(cid)]
-    valloader = valloaders[int(cid)]
+    # trainloader = trainloaders[int(cid)]
+    # valloader = valloaders[int(cid)]
+    trainloader = dl_clients[idx_fl_scale]['train'][int(cid)]
+    valloader = dl_clients[idx_fl_scale]['val'][int(cid)]
+
     # Create a single Flower client representing a single organization
     return FlowerClient(net, trainloader, valloader)
 
@@ -338,20 +352,22 @@ strategies = {
 
 
 print("Experiment on federated manner.")
-for sname, strategy in strategies.items():
-    print(f"{sname} simulation")
-
+for i, scale in enumerate(fl_scales):
+    idx_fl_scale = i
+    print(f"Simulation start....\nFL scale: {scale}")    
+    
     hist = fl.simulation.start_simulation(
         client_fn=client_fn,
         num_clients=NUM_CLIENTS,
         config=fl.server.ServerConfig(num_rounds=num_rounds),
-        strategy=strategy,
+        strategy=fedavg,
         client_resources=client_resources,
-    )
+    )    
 
     df_result = pd.DataFrame()
     df_result['round'] = [i for i in range(1, num_rounds + 1)]
-    df_result['strategy'] = sname
+    df_result['strategy'] = 'FedAvg'
+    df_result['fl_scale'] = scale
 
     # centralized metrics
     metrics_cen = list(hist.metrics_centralized.keys())
@@ -363,5 +379,6 @@ for sname, strategy in strategies.items():
         df_result[f"d_{metric}"] = [h[1] for h in hist.metrics_distributed[metric]]
 
     df_final = pd.concat([df_final, df_result], axis=0)
+
 
 df_final.to_csv(result_path, index=False)
