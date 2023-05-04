@@ -1,0 +1,2 @@
+round,Centralized,model,c_loss,d_loss,c_accuracy,d_accuracy
+2,Centralized,VGG11,0.046997964698076246,0.0,0.5235,0.0

@@ -1,0 +1,3 @@
+round,strategy,c_accuracy,d_accuracy
+1,FedAvg,0.2483,0.252
+2,FedAvg,0.28,0.26480000000000004

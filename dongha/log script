@@ -1,0 +1,8 @@
+screen -dmS test  
+screen -S test -X logfile log.txt
+screen -S test -X log
+screen -r test
+
+ctrl a d ∞° detach«œ±‚.
+
+screen -X -S test kill
