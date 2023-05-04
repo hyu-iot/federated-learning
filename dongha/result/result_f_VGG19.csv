@@ -1,2 +1,0 @@
-round,Centralized,model,c_accuracy,d_accuracy
-1,Federated,VGG19,0.1124,0.11879999999999999

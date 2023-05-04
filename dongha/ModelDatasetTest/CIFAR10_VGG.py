@@ -271,7 +271,7 @@ for key, value in models.items():
         df_centralized['c_accuracy'] = accuracy,
         df_centralized['d_accuracy'] = 0.0
         df_final = pd.concat([df_final, df_centralized], axis=0)
-        df_centralized.to_csv('../result/result_c_'+key+'.csv', index=False)
+    df_centralized.to_csv('../result/result_c_'+key+'.csv', index=False)
     torch.save(net.state_dict(), trained_path)
 
     ######## Federated ######## 
