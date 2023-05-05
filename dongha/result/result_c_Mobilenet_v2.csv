@@ -1,2 +1,0 @@
-round,Centralized,model,c_loss,c_accuracy,c_recall,c_precision,c_f1_score
-100,Centralized,Mobilenet_v2,0.04315839654803276,0.7134,0.7156057112011469,0.7134,0.7139952970748179

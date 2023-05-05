@@ -186,11 +186,14 @@ def get_parameters(net) -> List[np.ndarray]:
 
 def set_parameters(net, parameters: List[np.ndarray]):
     params_dict = zip(net.state_dict().keys(), parameters)
-    for k, v in params_dict:
-        continue
-    state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
+    state_dict = OrderedDict(
+        {
+            k: torch.Tensor(v) if v.shape != torch.Size([]) else torch.Tensor([0])
+            for k, v in params_dict
+        }
+    )
+    net.load_state_dict(state_dict, strict=True)
 
-    net.load_state_dict(state_dict, strict=False)
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, net, trainloader, valloader):
@@ -209,6 +212,7 @@ class FlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         set_parameters(self.net, parameters)
         loss, metrics = test(self.net, self.valloader)
+        print(f"Accuracy {metrics['accuracy']}")
         return float(loss), len(self.valloader), metrics
     
 def client_fn(cid: str) -> FlowerClient:
@@ -255,7 +259,8 @@ def evaluate(
 # %%
 models = {
     'Densenet121' : "densenet121",
-    'Mobilenet_v2': "mobilenet_v2",
+    'Mobilenet_v2': "mobilenet_v2", # Odd results
+    'Googlenet' : "googlenet", # Odd results
     'Resnet18' : "resnet18",
     'Resnet34' : "resnet34",
     'Resnet50' : "resnet50",
@@ -263,35 +268,42 @@ models = {
     'VGG13' : "vgg13", 
     'VGG16' : "vgg16", 
     'VGG19' : "vgg19",
-    # 'Googlenet' : "googlenet" # fails
 }
 
 # %%
 df_final = pd.DataFrame()
 
 for key, value in models.items():
-    net = getattr(torchvision.models, value)(num_classes=10).to(DEVICE)
+    if key == 'Googlenet':
+        net = torchvision.models.googlenet(num_classes=10, aux_logits=False).to(DEVICE)
+    else:    
+        net = getattr(torchvision.models, value)(num_classes=10).to(DEVICE)
     ######## Centralized #########
     print("Centralized: " + key)
     trained_path = "../dataset/trained_centralized_"+key+".pkl"
-
+    df_centralized = pd.DataFrame()
     for epoch in range(EPOCH):
+        df_temp = pd.DataFrame()
         train(net, full_split_trainloader, 1)
         loss, c_metrics = test(net, full_testloader) # Federated aggregation model tests full_testloader
         print(f"{key} Epoch {epoch+1}: validation loss {loss}, accuracy {c_metrics['accuracy']}")
-        df_centralized = pd.DataFrame()
-        df_centralized['round'] = epoch+1,
-        df_centralized['Centralized'] = 'Centralized',
-        df_centralized['model'] = key
+        
+        df_temp['round'] = epoch+1,
+        df_temp['Centralized'] = 'Centralized',
+        df_temp['model'] = key
         for metric in c_metrics:
-            df_centralized[f"c_{metric}"] = c_metrics[metric]
-        df_final = pd.concat([df_final, df_centralized], axis=0)
-    df_centralized.to_csv('../result/result_c_'+key+'.csv', index=False)
+            df_temp[f"c_{metric}"] = c_metrics[metric]
+        df_centralized = pd.concat([df_centralized, df_temp], axis=0)
+        df_final = pd.concat([df_final, df_temp], axis=0)
+        df_centralized.to_csv('../result/result_c_'+key+'.csv', index=False)
     torch.save(net.state_dict(), trained_path)
 
     ######## Federated ######## 
     # Reset net
-    net = getattr(torchvision.models, value)(num_classes=10).to(DEVICE) 
+    if key == 'Googlenet':
+        net = torchvision.models.googlenet(num_classes=10, aux_logits=False).to(DEVICE)
+    else:    
+        net = getattr(torchvision.models, value)(num_classes=10).to(DEVICE)
     print("Federated: " + key)
     fedavg = fl.server.strategy.FedAvg(
         fraction_fit=1.0,
@@ -328,6 +340,6 @@ for key, value in models.items():
 
     df_final = pd.concat([df_final, df_federated], axis=0)
 
-df_final.to_csv('../result/result_total.csv', index=False)
+    df_final.to_csv('../result/result_total.csv', index=False)
 
 
