@@ -3823,3 +3823,540 @@ VGG19 Epoch 76: validation loss 0.04219814214743674, accuracy 0.8169
 VGG19 Epoch 77: validation loss 0.0449929554508999, accuracy 0.8149
 VGG19 Epoch 78: validation loss 0.039671122016012667, accuracy 0.8135
 VGG19 Epoch 79: validation loss 0.03794568505063653, accuracy 0.8111
+VGG19 Epoch 80: validation loss 0.04143676669448614, accuracy 0.7899
+VGG19 Epoch 81: validation loss 0.03990547005832195, accuracy 0.8119
+VGG19 Epoch 82: validation loss 0.038612451869249345, accuracy 0.8112
+VGG19 Epoch 83: validation loss 0.04177199531644583, accuracy 0.8109
+VGG19 Epoch 84: validation loss 0.039541554140672085, accuracy 0.811
+VGG19 Epoch 85: validation loss 0.03767370407860726, accuracy 0.8033
+VGG19 Epoch 86: validation loss 0.03979319186508656, accuracy 0.8146
+VGG19 Epoch 87: validation loss 0.04458986453562975, accuracy 0.8122
+VGG19 Epoch 88: validation loss 0.03817400185316801, accuracy 0.8076
+VGG19 Epoch 89: validation loss 0.04408687138259411, accuracy 0.7951
+VGG19 Epoch 90: validation loss 0.03880771487288585, accuracy 0.813
+VGG19 Epoch 91: validation loss 0.044135623337328435, accuracy 0.8096
+VGG19 Epoch 92: validation loss 0.039369895580783486, accuracy 0.8146
+VGG19 Epoch 93: validation loss 0.04333407355248928, accuracy 0.8189
+VGG19 Epoch 94: validation loss 0.045579814728349446, accuracy 0.8139
+VGG19 Epoch 95: validation loss 0.046859923226526004, accuracy 0.8175
+VGG19 Epoch 96: validation loss 0.047869039990007876, accuracy 0.8184
+VGG19 Epoch 97: validation loss 0.04850126742944121, accuracy 0.8189
+VGG19 Epoch 98: validation loss 0.04899057945534587, accuracy 0.8193
+VGG19 Epoch 99: validation loss 0.049291673437692224, accuracy 0.8193
+VGG19 Epoch 100: validation loss 0.04960704797822982, accuracy 0.8194
+Federated: VGG19
+INFO flwr 2023-05-04 23:46:38,716 | app.py:146 | Starting Flower simulation, config: ServerConfig(num_rounds=100, round_timeout=None)
+2023-05-04 23:46:42,860 INFO worker.py:1553 -- Started a local Ray instance.
+INFO flwr 2023-05-04 23:46:43,480 | app.py:180 | Flower VCE: Ray initialized with resources: {'node:172.17.0.2': 1.0, 'object_store_memory': 34981039718.0, 'accelerator_type:RTX': 1.0, 'GPU': 1.0, 'CPU': 16.0, 'memory': 71622426010.0}
+INFO flwr 2023-05-04 23:46:43,480 | server.py:86 | Initializing global parameters
+INFO flwr 2023-05-04 23:46:43,480 | server.py:273 | Requesting initial parameters from one random client
+INFO flwr 2023-05-04 23:46:46,503 | server.py:277 | Received initial parameters from one random client
+INFO flwr 2023-05-04 23:46:46,503 | server.py:88 | Evaluating initial parameters
+Server-side evaluation loss 0.07208027040958405 / accuracy 0.1001
+INFO flwr 2023-05-04 23:46:48,406 | server.py:91 | initial parameters (loss, other metrics): 0.07208027040958405, {'accuracy': 0.1001}
+INFO flwr 2023-05-04 23:46:48,406 | server.py:101 | FL starting
+DEBUG flwr 2023-05-04 23:46:48,406 | server.py:218 | fit_round 1: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-04 23:47:48,185 | server.py:232 | fit_round 1 received 10 results and 0 failures
+WARNING flwr 2023-05-04 23:47:50,351 | fedavg.py:243 | No fit_metrics_aggregation_fn provided
+Server-side evaluation loss 0.07192082407474518 / accuracy 0.1
+INFO flwr 2023-05-04 23:47:52,286 | server.py:119 | fit progress: (1, 0.07192082407474518, {'accuracy': 0.1}, 63.879667670000345)
+DEBUG flwr 2023-05-04 23:47:52,286 | server.py:168 | evaluate_round 1: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1307687)[0m Accuracy: 0.08
+[2m[36m(launch_and_evaluate pid=1307748)[0m Accuracy: 0.112
+[2m[36m(launch_and_evaluate pid=1307807)[0m Accuracy: 0.074
+[2m[36m(launch_and_evaluate pid=1307870)[0m Accuracy: 0.1
+DEBUG flwr 2023-05-04 23:48:06,604 | server.py:182 | evaluate_round 1 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:48:06,604 | server.py:218 | fit_round 2: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1307930)[0m Accuracy: 0.098
+DEBUG flwr 2023-05-04 23:49:05,079 | server.py:232 | fit_round 2 received 10 results and 0 failures
+Server-side evaluation loss 0.0690511589050293 / accuracy 0.2086
+INFO flwr 2023-05-04 23:49:09,246 | server.py:119 | fit progress: (2, 0.0690511589050293, {'accuracy': 0.2086}, 140.83949305303395)
+DEBUG flwr 2023-05-04 23:49:09,246 | server.py:168 | evaluate_round 2: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1308593)[0m Accuracy: 0.206
+[2m[36m(launch_and_evaluate pid=1308648)[0m Accuracy: 0.184
+[2m[36m(launch_and_evaluate pid=1308706)[0m Accuracy: 0.242
+[2m[36m(launch_and_evaluate pid=1308762)[0m Accuracy: 0.21
+[2m[36m(launch_and_evaluate pid=1308819)[0m Accuracy: 0.208
+DEBUG flwr 2023-05-04 23:49:24,505 | server.py:182 | evaluate_round 2 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:49:24,505 | server.py:218 | fit_round 3: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-04 23:50:24,964 | server.py:232 | fit_round 3 received 10 results and 0 failures
+Server-side evaluation loss 0.0632964497923851 / accuracy 0.2125
+INFO flwr 2023-05-04 23:50:29,118 | server.py:119 | fit progress: (3, 0.0632964497923851, {'accuracy': 0.2125}, 220.71199250710197)
+DEBUG flwr 2023-05-04 23:50:29,118 | server.py:168 | evaluate_round 3: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1309480)[0m Accuracy: 0.2
+[2m[36m(launch_and_evaluate pid=1309535)[0m Accuracy: 0.202
+[2m[36m(launch_and_evaluate pid=1309592)[0m Accuracy: 0.214
+[2m[36m(launch_and_evaluate pid=1309649)[0m Accuracy: 0.238
+DEBUG flwr 2023-05-04 23:50:44,784 | server.py:182 | evaluate_round 3 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:50:44,784 | server.py:218 | fit_round 4: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1309708)[0m Accuracy: 0.208
+DEBUG flwr 2023-05-04 23:51:45,142 | server.py:232 | fit_round 4 received 10 results and 0 failures
+Server-side evaluation loss 0.05906057372093201 / accuracy 0.2491
+INFO flwr 2023-05-04 23:51:49,271 | server.py:119 | fit progress: (4, 0.05906057372093201, {'accuracy': 0.2491}, 300.8653233801015)
+DEBUG flwr 2023-05-04 23:51:49,272 | server.py:168 | evaluate_round 4: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1310366)[0m Accuracy: 0.26
+[2m[36m(launch_and_evaluate pid=1310421)[0m Accuracy: 0.238
+[2m[36m(launch_and_evaluate pid=1310478)[0m Accuracy: 0.228
+[2m[36m(launch_and_evaluate pid=1310535)[0m Accuracy: 0.25
+DEBUG flwr 2023-05-04 23:52:04,492 | server.py:182 | evaluate_round 4 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:52:04,492 | server.py:218 | fit_round 5: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1310592)[0m Accuracy: 0.25
+DEBUG flwr 2023-05-04 23:53:04,227 | server.py:232 | fit_round 5 received 10 results and 0 failures
+Server-side evaluation loss 0.05643555351495743 / accuracy 0.2828
+INFO flwr 2023-05-04 23:53:08,329 | server.py:119 | fit progress: (5, 0.05643555351495743, {'accuracy': 0.2828}, 379.92336051515304)
+DEBUG flwr 2023-05-04 23:53:08,330 | server.py:168 | evaluate_round 5: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1311255)[0m Accuracy: 0.282
+[2m[36m(launch_and_evaluate pid=1311310)[0m Accuracy: 0.26
+[2m[36m(launch_and_evaluate pid=1311367)[0m Accuracy: 0.278
+[2m[36m(launch_and_evaluate pid=1311424)[0m Accuracy: 0.31
+DEBUG flwr 2023-05-04 23:53:23,231 | server.py:182 | evaluate_round 5 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:53:23,231 | server.py:218 | fit_round 6: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1311481)[0m Accuracy: 0.264
+DEBUG flwr 2023-05-04 23:54:22,577 | server.py:232 | fit_round 6 received 10 results and 0 failures
+Server-side evaluation loss 0.05390758224725723 / accuracy 0.3469
+INFO flwr 2023-05-04 23:54:26,691 | server.py:119 | fit progress: (6, 0.05390758224725723, {'accuracy': 0.3469}, 458.28487245412543)
+DEBUG flwr 2023-05-04 23:54:26,691 | server.py:168 | evaluate_round 6: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1312140)[0m Accuracy: 0.358
+[2m[36m(launch_and_evaluate pid=1312196)[0m Accuracy: 0.336
+[2m[36m(launch_and_evaluate pid=1312252)[0m Accuracy: 0.348
+[2m[36m(launch_and_evaluate pid=1312309)[0m Accuracy: 0.31
+DEBUG flwr 2023-05-04 23:54:41,591 | server.py:182 | evaluate_round 6 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:54:41,591 | server.py:218 | fit_round 7: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1312367)[0m Accuracy: 0.32
+DEBUG flwr 2023-05-04 23:55:40,842 | server.py:232 | fit_round 7 received 10 results and 0 failures
+Server-side evaluation loss 0.05107059245109558 / accuracy 0.3781
+INFO flwr 2023-05-04 23:55:44,948 | server.py:119 | fit progress: (7, 0.05107059245109558, {'accuracy': 0.3781}, 536.5418995369691)
+DEBUG flwr 2023-05-04 23:55:44,948 | server.py:168 | evaluate_round 7: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1313026)[0m Accuracy: 0.36
+[2m[36m(launch_and_evaluate pid=1313082)[0m Accuracy: 0.374
+[2m[36m(launch_and_evaluate pid=1313139)[0m Accuracy: 0.354
+[2m[36m(launch_and_evaluate pid=1313196)[0m Accuracy: 0.384
+DEBUG flwr 2023-05-04 23:56:00,468 | server.py:182 | evaluate_round 7 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:56:00,468 | server.py:218 | fit_round 8: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1313254)[0m Accuracy: 0.356
+DEBUG flwr 2023-05-04 23:56:59,369 | server.py:232 | fit_round 8 received 10 results and 0 failures
+Server-side evaluation loss 0.04911658531427383 / accuracy 0.3947
+INFO flwr 2023-05-04 23:57:03,484 | server.py:119 | fit progress: (8, 0.04911658531427383, {'accuracy': 0.3947}, 615.0782912590075)
+DEBUG flwr 2023-05-04 23:57:03,485 | server.py:168 | evaluate_round 8: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1313920)[0m Accuracy: 0.392
+[2m[36m(launch_and_evaluate pid=1313975)[0m Accuracy: 0.39
+[2m[1m[33m(autoscaler +9h4m26s)[0m Warning: The following resource request cannot be scheduled right now: {'GPU': 1.0, 'CPU': 1.0}. This is likely due to all cluster resources being claimed by actors. Consider creating fewer actors or adding more nodes to this Ray cluster.
+[2m[36m(launch_and_evaluate pid=1314031)[0m Accuracy: 0.366
+[2m[36m(launch_and_evaluate pid=1314089)[0m Accuracy: 0.362
+DEBUG flwr 2023-05-04 23:57:18,779 | server.py:182 | evaluate_round 8 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:57:18,779 | server.py:218 | fit_round 9: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1314146)[0m Accuracy: 0.406
+DEBUG flwr 2023-05-04 23:58:18,727 | server.py:232 | fit_round 9 received 10 results and 0 failures
+Server-side evaluation loss 0.04691411712169647 / accuracy 0.4274
+INFO flwr 2023-05-04 23:58:22,839 | server.py:119 | fit progress: (9, 0.04691411712169647, {'accuracy': 0.4274}, 694.4330904011149)
+DEBUG flwr 2023-05-04 23:58:22,839 | server.py:168 | evaluate_round 9: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1314805)[0m Accuracy: 0.428
+[2m[36m(launch_and_evaluate pid=1314861)[0m Accuracy: 0.394
+[2m[36m(launch_and_evaluate pid=1314917)[0m Accuracy: 0.42
+[2m[36m(launch_and_evaluate pid=1314975)[0m Accuracy: 0.404
+DEBUG flwr 2023-05-04 23:58:37,758 | server.py:182 | evaluate_round 9 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:58:37,758 | server.py:218 | fit_round 10: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1315032)[0m Accuracy: 0.39
+DEBUG flwr 2023-05-04 23:59:36,001 | server.py:232 | fit_round 10 received 10 results and 0 failures
+Server-side evaluation loss 0.04533706803321838 / accuracy 0.4499
+INFO flwr 2023-05-04 23:59:40,198 | server.py:119 | fit progress: (10, 0.04533706803321838, {'accuracy': 0.4499}, 771.7916945931502)
+DEBUG flwr 2023-05-04 23:59:40,198 | server.py:168 | evaluate_round 10: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1315692)[0m Accuracy: 0.462
+[2m[36m(launch_and_evaluate pid=1315747)[0m Accuracy: 0.452
+[2m[36m(launch_and_evaluate pid=1315804)[0m Accuracy: 0.46
+[2m[36m(launch_and_evaluate pid=1315861)[0m Accuracy: 0.442
+DEBUG flwr 2023-05-04 23:59:55,435 | server.py:182 | evaluate_round 10 received 5 results and 0 failures
+DEBUG flwr 2023-05-04 23:59:55,435 | server.py:218 | fit_round 11: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1315919)[0m Accuracy: 0.43
+DEBUG flwr 2023-05-05 00:00:53,948 | server.py:232 | fit_round 11 received 10 results and 0 failures
+Server-side evaluation loss 0.04397901438474655 / accuracy 0.4704
+INFO flwr 2023-05-05 00:00:58,090 | server.py:119 | fit progress: (11, 0.04397901438474655, {'accuracy': 0.4704}, 849.6841582970228)
+DEBUG flwr 2023-05-05 00:00:58,090 | server.py:168 | evaluate_round 11: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1316577)[0m Accuracy: 0.478
+[2m[36m(launch_and_evaluate pid=1316634)[0m Accuracy: 0.482
+[2m[36m(launch_and_evaluate pid=1316689)[0m Accuracy: 0.436
+[2m[36m(launch_and_evaluate pid=1316747)[0m Accuracy: 0.444
+[2m[36m(launch_and_evaluate pid=1316804)[0m Accuracy: 0.49
+DEBUG flwr 2023-05-05 00:01:13,710 | server.py:182 | evaluate_round 11 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:01:13,710 | server.py:218 | fit_round 12: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-05 00:02:13,545 | server.py:232 | fit_round 12 received 10 results and 0 failures
+Server-side evaluation loss 0.042996883779764176 / accuracy 0.4812
+INFO flwr 2023-05-05 00:02:17,643 | server.py:119 | fit progress: (12, 0.042996883779764176, {'accuracy': 0.4812}, 929.2370923389681)
+DEBUG flwr 2023-05-05 00:02:17,643 | server.py:168 | evaluate_round 12: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1317464)[0m Accuracy: 0.456
+[2m[36m(launch_and_evaluate pid=1317521)[0m Accuracy: 0.474
+[2m[36m(launch_and_evaluate pid=1317577)[0m Accuracy: 0.496
+[2m[36m(launch_and_evaluate pid=1317635)[0m Accuracy: 0.434
+DEBUG flwr 2023-05-05 00:02:32,831 | server.py:182 | evaluate_round 12 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:02:32,831 | server.py:218 | fit_round 13: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1317693)[0m Accuracy: 0.498
+DEBUG flwr 2023-05-05 00:03:31,840 | server.py:232 | fit_round 13 received 10 results and 0 failures
+Server-side evaluation loss 0.041226297247409824 / accuracy 0.5076
+INFO flwr 2023-05-05 00:03:35,985 | server.py:119 | fit progress: (13, 0.041226297247409824, {'accuracy': 0.5076}, 1007.5783904860727)
+DEBUG flwr 2023-05-05 00:03:35,985 | server.py:168 | evaluate_round 13: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1318351)[0m Accuracy: 0.508
+[2m[36m(launch_and_evaluate pid=1318406)[0m Accuracy: 0.468
+[2m[36m(launch_and_evaluate pid=1318463)[0m Accuracy: 0.488
+[2m[36m(launch_and_evaluate pid=1318520)[0m Accuracy: 0.478
+[2m[36m(launch_and_evaluate pid=1318578)[0m Accuracy: 0.54
+DEBUG flwr 2023-05-05 00:03:51,378 | server.py:182 | evaluate_round 13 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:03:51,378 | server.py:218 | fit_round 14: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-05 00:04:51,649 | server.py:232 | fit_round 14 received 10 results and 0 failures
+Server-side evaluation loss 0.04032279726862907 / accuracy 0.5173
+INFO flwr 2023-05-05 00:04:55,781 | server.py:119 | fit progress: (14, 0.04032279726862907, {'accuracy': 0.5173}, 1087.3753338330425)
+DEBUG flwr 2023-05-05 00:04:55,782 | server.py:168 | evaluate_round 14: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1319239)[0m Accuracy: 0.54
+[2m[36m(launch_and_evaluate pid=1319295)[0m Accuracy: 0.484
+[2m[36m(launch_and_evaluate pid=1319351)[0m Accuracy: 0.48
+[2m[36m(launch_and_evaluate pid=1319409)[0m Accuracy: 0.526
+DEBUG flwr 2023-05-05 00:05:10,887 | server.py:182 | evaluate_round 14 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:05:10,887 | server.py:218 | fit_round 15: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1319467)[0m Accuracy: 0.5
+DEBUG flwr 2023-05-05 00:06:11,274 | server.py:232 | fit_round 15 received 10 results and 0 failures
+Server-side evaluation loss 0.0387935919880867 / accuracy 0.5444
+INFO flwr 2023-05-05 00:06:15,366 | server.py:119 | fit progress: (15, 0.0387935919880867, {'accuracy': 0.5444}, 1166.9598710290156)
+DEBUG flwr 2023-05-05 00:06:15,366 | server.py:168 | evaluate_round 15: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1320125)[0m Accuracy: 0.522
+[2m[36m(launch_and_evaluate pid=1320182)[0m Accuracy: 0.566
+[2m[36m(launch_and_evaluate pid=1320238)[0m Accuracy: 0.528
+[2m[36m(launch_and_evaluate pid=1320295)[0m Accuracy: 0.532
+DEBUG flwr 2023-05-05 00:06:30,379 | server.py:182 | evaluate_round 15 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:06:30,379 | server.py:218 | fit_round 16: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1320353)[0m Accuracy: 0.524
+DEBUG flwr 2023-05-05 00:07:30,214 | server.py:232 | fit_round 16 received 10 results and 0 failures
+Server-side evaluation loss 0.038791533130407334 / accuracy 0.5465
+INFO flwr 2023-05-05 00:07:34,349 | server.py:119 | fit progress: (16, 0.038791533130407334, {'accuracy': 0.5465}, 1245.9429800990038)
+DEBUG flwr 2023-05-05 00:07:34,349 | server.py:168 | evaluate_round 16: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1321014)[0m Accuracy: 0.53
+[2m[36m(launch_and_evaluate pid=1321069)[0m Accuracy: 0.542
+[2m[36m(launch_and_evaluate pid=1321125)[0m Accuracy: 0.546
+[2m[36m(launch_and_evaluate pid=1321183)[0m Accuracy: 0.518
+DEBUG flwr 2023-05-05 00:07:49,896 | server.py:182 | evaluate_round 16 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:07:49,896 | server.py:218 | fit_round 17: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1321240)[0m Accuracy: 0.52
+DEBUG flwr 2023-05-05 00:08:49,280 | server.py:232 | fit_round 17 received 10 results and 0 failures
+Server-side evaluation loss 0.03658607635498047 / accuracy 0.5777
+INFO flwr 2023-05-05 00:08:53,408 | server.py:119 | fit progress: (17, 0.03658607635498047, {'accuracy': 0.5777}, 1325.001657098066)
+DEBUG flwr 2023-05-05 00:08:53,408 | server.py:168 | evaluate_round 17: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1321900)[0m Accuracy: 0.598
+[2m[36m(launch_and_evaluate pid=1321956)[0m Accuracy: 0.556
+[2m[36m(launch_and_evaluate pid=1322012)[0m Accuracy: 0.564
+[2m[36m(launch_and_evaluate pid=1322070)[0m Accuracy: 0.54
+DEBUG flwr 2023-05-05 00:09:08,417 | server.py:182 | evaluate_round 17 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:09:08,418 | server.py:218 | fit_round 18: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1322127)[0m Accuracy: 0.594
+DEBUG flwr 2023-05-05 00:10:08,525 | server.py:232 | fit_round 18 received 10 results and 0 failures
+Server-side evaluation loss 0.035749105924367905 / accuracy 0.5818
+INFO flwr 2023-05-05 00:10:12,665 | server.py:119 | fit progress: (18, 0.035749105924367905, {'accuracy': 0.5818}, 1404.2590403801296)
+DEBUG flwr 2023-05-05 00:10:12,665 | server.py:168 | evaluate_round 18: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1322786)[0m Accuracy: 0.542
+[2m[36m(launch_and_evaluate pid=1322842)[0m Accuracy: 0.578
+[2m[36m(launch_and_evaluate pid=1322898)[0m Accuracy: 0.586
+[2m[36m(launch_and_evaluate pid=1322956)[0m Accuracy: 0.588
+[2m[36m(launch_and_evaluate pid=1323013)[0m Accuracy: 0.568
+DEBUG flwr 2023-05-05 00:10:28,228 | server.py:182 | evaluate_round 18 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:10:28,228 | server.py:218 | fit_round 19: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-05 00:11:27,300 | server.py:232 | fit_round 19 received 10 results and 0 failures
+Server-side evaluation loss 0.03480508783459663 / accuracy 0.5952
+INFO flwr 2023-05-05 00:11:31,438 | server.py:119 | fit progress: (19, 0.03480508783459663, {'accuracy': 0.5952}, 1483.0323231301736)
+DEBUG flwr 2023-05-05 00:11:31,439 | server.py:168 | evaluate_round 19: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1323673)[0m Accuracy: 0.61
+[2m[36m(launch_and_evaluate pid=1323729)[0m Accuracy: 0.59
+[2m[36m(launch_and_evaluate pid=1323785)[0m Accuracy: 0.594
+[2m[36m(launch_and_evaluate pid=1323842)[0m Accuracy: 0.578
+DEBUG flwr 2023-05-05 00:11:46,428 | server.py:182 | evaluate_round 19 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:11:46,428 | server.py:218 | fit_round 20: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1323900)[0m Accuracy: 0.594
+DEBUG flwr 2023-05-05 00:12:46,071 | server.py:232 | fit_round 20 received 10 results and 0 failures
+Server-side evaluation loss 0.0342214597761631 / accuracy 0.6052
+INFO flwr 2023-05-05 00:12:50,207 | server.py:119 | fit progress: (20, 0.0342214597761631, {'accuracy': 0.6052}, 1561.8005157790612)
+DEBUG flwr 2023-05-05 00:12:50,207 | server.py:168 | evaluate_round 20: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1324559)[0m Accuracy: 0.61
+[2m[36m(launch_and_evaluate pid=1324614)[0m Accuracy: 0.622
+[2m[36m(launch_and_evaluate pid=1324670)[0m Accuracy: 0.568
+[2m[36m(launch_and_evaluate pid=1324729)[0m Accuracy: 0.606
+DEBUG flwr 2023-05-05 00:13:05,133 | server.py:182 | evaluate_round 20 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:13:05,133 | server.py:218 | fit_round 21: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1324785)[0m Accuracy: 0.642
+DEBUG flwr 2023-05-05 00:14:05,173 | server.py:232 | fit_round 21 received 10 results and 0 failures
+Server-side evaluation loss 0.03329742341339588 / accuracy 0.6169
+INFO flwr 2023-05-05 00:14:09,325 | server.py:119 | fit progress: (21, 0.03329742341339588, {'accuracy': 0.6169}, 1640.9186628400348)
+DEBUG flwr 2023-05-05 00:14:09,325 | server.py:168 | evaluate_round 21: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1325445)[0m Accuracy: 0.61
+[2m[36m(launch_and_evaluate pid=1325502)[0m Accuracy: 0.594
+[2m[36m(launch_and_evaluate pid=1325557)[0m Accuracy: 0.604
+[2m[36m(launch_and_evaluate pid=1325616)[0m Accuracy: 0.634
+DEBUG flwr 2023-05-05 00:14:24,118 | server.py:182 | evaluate_round 21 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:14:24,118 | server.py:218 | fit_round 22: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1325672)[0m Accuracy: 0.604
+DEBUG flwr 2023-05-05 00:15:24,504 | server.py:232 | fit_round 22 received 10 results and 0 failures
+Server-side evaluation loss 0.03271321954131126 / accuracy 0.6258
+INFO flwr 2023-05-05 00:15:28,612 | server.py:119 | fit progress: (22, 0.03271321954131126, {'accuracy': 0.6258}, 1720.2054349891841)
+DEBUG flwr 2023-05-05 00:15:28,612 | server.py:168 | evaluate_round 22: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1326331)[0m Accuracy: 0.604
+[2m[36m(launch_and_evaluate pid=1326387)[0m Accuracy: 0.592
+[2m[36m(launch_and_evaluate pid=1326443)[0m Accuracy: 0.628
+[2m[36m(launch_and_evaluate pid=1326500)[0m Accuracy: 0.628
+DEBUG flwr 2023-05-05 00:15:43,414 | server.py:182 | evaluate_round 22 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:15:43,414 | server.py:218 | fit_round 23: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1326558)[0m Accuracy: 0.644
+DEBUG flwr 2023-05-05 00:16:44,085 | server.py:232 | fit_round 23 received 10 results and 0 failures
+Server-side evaluation loss 0.03137531041502953 / accuracy 0.6428
+INFO flwr 2023-05-05 00:16:48,251 | server.py:119 | fit progress: (23, 0.03137531041502953, {'accuracy': 0.6428}, 1799.8450947850943)
+DEBUG flwr 2023-05-05 00:16:48,251 | server.py:168 | evaluate_round 23: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1327221)[0m Accuracy: 0.672
+[2m[36m(launch_and_evaluate pid=1327277)[0m Accuracy: 0.612
+[2m[36m(launch_and_evaluate pid=1327333)[0m Accuracy: 0.646
+[2m[36m(launch_and_evaluate pid=1327390)[0m Accuracy: 0.646
+[2m[36m(launch_and_evaluate pid=1327448)[0m Accuracy: 0.64
+DEBUG flwr 2023-05-05 00:17:03,257 | server.py:182 | evaluate_round 23 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:17:03,257 | server.py:218 | fit_round 24: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-05 00:18:03,094 | server.py:232 | fit_round 24 received 10 results and 0 failures
+Server-side evaluation loss 0.03064438552558422 / accuracy 0.6505
+INFO flwr 2023-05-05 00:18:07,203 | server.py:119 | fit progress: (24, 0.03064438552558422, {'accuracy': 0.6505}, 1878.7972371571232)
+DEBUG flwr 2023-05-05 00:18:07,204 | server.py:168 | evaluate_round 24: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1328108)[0m Accuracy: 0.646
+[2m[36m(launch_and_evaluate pid=1328163)[0m Accuracy: 0.636
+[2m[36m(launch_and_evaluate pid=1328220)[0m Accuracy: 0.666
+[2m[36m(launch_and_evaluate pid=1328277)[0m Accuracy: 0.682
+[2m[36m(launch_and_evaluate pid=1328335)[0m Accuracy: 0.654
+DEBUG flwr 2023-05-05 00:18:22,472 | server.py:182 | evaluate_round 24 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:18:22,472 | server.py:218 | fit_round 25: strategy sampled 10 clients (out of 10)
+DEBUG flwr 2023-05-05 00:19:20,962 | server.py:232 | fit_round 25 received 10 results and 0 failures
+Server-side evaluation loss 0.03003052381873131 / accuracy 0.6606
+INFO flwr 2023-05-05 00:19:25,100 | server.py:119 | fit progress: (25, 0.03003052381873131, {'accuracy': 0.6606}, 1956.6941769639961)
+DEBUG flwr 2023-05-05 00:19:25,100 | server.py:168 | evaluate_round 25: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1328995)[0m Accuracy: 0.672
+[2m[36m(launch_and_evaluate pid=1329050)[0m Accuracy: 0.666
+[2m[36m(launch_and_evaluate pid=1329106)[0m Accuracy: 0.64
+[2m[36m(launch_and_evaluate pid=1329164)[0m Accuracy: 0.658
+DEBUG flwr 2023-05-05 00:19:40,652 | server.py:182 | evaluate_round 25 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:19:40,653 | server.py:218 | fit_round 26: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1329221)[0m Accuracy: 0.704
+DEBUG flwr 2023-05-05 00:20:40,806 | server.py:232 | fit_round 26 received 10 results and 0 failures
+Server-side evaluation loss 0.02975264423787594 / accuracy 0.6638
+INFO flwr 2023-05-05 00:20:44,910 | server.py:119 | fit progress: (26, 0.02975264423787594, {'accuracy': 0.6638}, 2036.5040293789934)
+DEBUG flwr 2023-05-05 00:20:44,910 | server.py:168 | evaluate_round 26: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1329882)[0m Accuracy: 0.642
+[2m[36m(launch_and_evaluate pid=1329937)[0m Accuracy: 0.652
+[2m[36m(launch_and_evaluate pid=1329993)[0m Accuracy: 0.672
+[2m[36m(launch_and_evaluate pid=1330052)[0m Accuracy: 0.65
+DEBUG flwr 2023-05-05 00:21:00,104 | server.py:182 | evaluate_round 26 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:21:00,105 | server.py:218 | fit_round 27: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1330108)[0m Accuracy: 0.632
+DEBUG flwr 2023-05-05 00:21:58,674 | server.py:232 | fit_round 27 received 10 results and 0 failures
+Server-side evaluation loss 0.028779060998558998 / accuracy 0.6743
+INFO flwr 2023-05-05 00:22:02,810 | server.py:119 | fit progress: (27, 0.028779060998558998, {'accuracy': 0.6743}, 2114.4042050680146)
+DEBUG flwr 2023-05-05 00:22:02,810 | server.py:168 | evaluate_round 27: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1330768)[0m Accuracy: 0.662
+[2m[36m(launch_and_evaluate pid=1330823)[0m Accuracy: 0.682
+[2m[36m(launch_and_evaluate pid=1330881)[0m Accuracy: 0.656
+[2m[36m(launch_and_evaluate pid=1330937)[0m Accuracy: 0.684
+DEBUG flwr 2023-05-05 00:22:17,875 | server.py:182 | evaluate_round 27 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:22:17,875 | server.py:218 | fit_round 28: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1330996)[0m Accuracy: 0.696
+DEBUG flwr 2023-05-05 00:23:17,267 | server.py:232 | fit_round 28 received 10 results and 0 failures
+Server-side evaluation loss 0.028303519195318223 / accuracy 0.6799
+INFO flwr 2023-05-05 00:23:21,426 | server.py:119 | fit progress: (28, 0.028303519195318223, {'accuracy': 0.6799}, 2193.0201721731573)
+DEBUG flwr 2023-05-05 00:23:21,426 | server.py:168 | evaluate_round 28: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1331655)[0m Accuracy: 0.64
+[2m[36m(launch_and_evaluate pid=1331711)[0m Accuracy: 0.66
+[2m[36m(launch_and_evaluate pid=1331767)[0m Accuracy: 0.72
+[2m[36m(launch_and_evaluate pid=1331824)[0m Accuracy: 0.694
+DEBUG flwr 2023-05-05 00:23:36,384 | server.py:182 | evaluate_round 28 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:23:36,384 | server.py:218 | fit_round 29: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1331881)[0m Accuracy: 0.678
+DEBUG flwr 2023-05-05 00:24:36,320 | server.py:232 | fit_round 29 received 10 results and 0 failures
+Server-side evaluation loss 0.027951329404115675 / accuracy 0.6879
+INFO flwr 2023-05-05 00:24:40,432 | server.py:119 | fit progress: (29, 0.027951329404115675, {'accuracy': 0.6879}, 2272.025567259174)
+DEBUG flwr 2023-05-05 00:24:40,432 | server.py:168 | evaluate_round 29: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1332541)[0m Accuracy: 0.684
+[2m[36m(launch_and_evaluate pid=1332596)[0m Accuracy: 0.694
+[2m[36m(launch_and_evaluate pid=1332652)[0m Accuracy: 0.698
+[2m[36m(launch_and_evaluate pid=1332710)[0m Accuracy: 0.684
+DEBUG flwr 2023-05-05 00:24:56,040 | server.py:182 | evaluate_round 29 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:24:56,040 | server.py:218 | fit_round 30: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1332767)[0m Accuracy: 0.698
+DEBUG flwr 2023-05-05 00:25:56,238 | server.py:232 | fit_round 30 received 10 results and 0 failures
+Server-side evaluation loss 0.027628680711984634 / accuracy 0.6929
+INFO flwr 2023-05-05 00:26:00,325 | server.py:119 | fit progress: (30, 0.027628680711984634, {'accuracy': 0.6929}, 2351.9189882620703)
+DEBUG flwr 2023-05-05 00:26:00,325 | server.py:168 | evaluate_round 30: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1333428)[0m Accuracy: 0.686
+[2m[36m(launch_and_evaluate pid=1333483)[0m Accuracy: 0.678
+[2m[36m(launch_and_evaluate pid=1333539)[0m Accuracy: 0.676
+[2m[36m(launch_and_evaluate pid=1333597)[0m Accuracy: 0.676
+DEBUG flwr 2023-05-05 00:26:15,541 | server.py:182 | evaluate_round 30 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:26:15,541 | server.py:218 | fit_round 31: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1333655)[0m Accuracy: 0.654
+DEBUG flwr 2023-05-05 00:27:15,983 | server.py:232 | fit_round 31 received 10 results and 0 failures
+Server-side evaluation loss 0.02706809281408787 / accuracy 0.7022
+INFO flwr 2023-05-05 00:27:20,101 | server.py:119 | fit progress: (31, 0.02706809281408787, {'accuracy': 0.7022}, 2431.6949020121247)
+DEBUG flwr 2023-05-05 00:27:20,101 | server.py:168 | evaluate_round 31: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1334315)[0m Accuracy: 0.682
+[2m[36m(launch_and_evaluate pid=1334371)[0m Accuracy: 0.7
+[2m[36m(launch_and_evaluate pid=1334427)[0m Accuracy: 0.666
+[2m[36m(launch_and_evaluate pid=1334485)[0m Accuracy: 0.708
+DEBUG flwr 2023-05-05 00:27:34,934 | server.py:182 | evaluate_round 31 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:27:34,934 | server.py:218 | fit_round 32: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1334542)[0m Accuracy: 0.752
+DEBUG flwr 2023-05-05 00:28:34,330 | server.py:232 | fit_round 32 received 10 results and 0 failures
+Server-side evaluation loss 0.026329305413365364 / accuracy 0.7117
+INFO flwr 2023-05-05 00:28:38,440 | server.py:119 | fit progress: (32, 0.026329305413365364, {'accuracy': 0.7117}, 2510.033685195027)
+DEBUG flwr 2023-05-05 00:28:38,440 | server.py:168 | evaluate_round 32: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1335201)[0m Accuracy: 0.672
+[2m[36m(launch_and_evaluate pid=1335257)[0m Accuracy: 0.756
+[2m[36m(launch_and_evaluate pid=1335313)[0m Accuracy: 0.704
+[2m[36m(launch_and_evaluate pid=1335370)[0m Accuracy: 0.71
+DEBUG flwr 2023-05-05 00:28:54,123 | server.py:182 | evaluate_round 32 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:28:54,123 | server.py:218 | fit_round 33: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1335429)[0m Accuracy: 0.71
+[2m[1m[33m(autoscaler +9h36m29s)[0m Warning: The following resource request cannot be scheduled right now: {'GPU': 1.0, 'CPU': 1.0}. This is likely due to all cluster resources being claimed by actors. Consider creating fewer actors or adding more nodes to this Ray cluster.
+DEBUG flwr 2023-05-05 00:29:53,141 | server.py:232 | fit_round 33 received 10 results and 0 failures
+Server-side evaluation loss 0.025887172925472258 / accuracy 0.7163
+INFO flwr 2023-05-05 00:29:57,298 | server.py:119 | fit progress: (33, 0.025887172925472258, {'accuracy': 0.7163}, 2588.892335013021)
+DEBUG flwr 2023-05-05 00:29:57,299 | server.py:168 | evaluate_round 33: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1336088)[0m Accuracy: 0.722
+[2m[36m(launch_and_evaluate pid=1336143)[0m Accuracy: 0.692
+[2m[36m(launch_and_evaluate pid=1336200)[0m Accuracy: 0.702
+[2m[36m(launch_and_evaluate pid=1336257)[0m Accuracy: 0.72
+DEBUG flwr 2023-05-05 00:30:12,732 | server.py:182 | evaluate_round 33 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:30:12,732 | server.py:218 | fit_round 34: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1336315)[0m Accuracy: 0.756
+DEBUG flwr 2023-05-05 00:31:12,499 | server.py:232 | fit_round 34 received 10 results and 0 failures
+Server-side evaluation loss 0.025764237901568413 / accuracy 0.7164
+INFO flwr 2023-05-05 00:31:16,601 | server.py:119 | fit progress: (34, 0.025764237901568413, {'accuracy': 0.7164}, 2668.194567141123)
+DEBUG flwr 2023-05-05 00:31:16,601 | server.py:168 | evaluate_round 34: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1336974)[0m Accuracy: 0.734
+[2m[36m(launch_and_evaluate pid=1337029)[0m Accuracy: 0.766
+[2m[36m(launch_and_evaluate pid=1337086)[0m Accuracy: 0.712
+[2m[36m(launch_and_evaluate pid=1337143)[0m Accuracy: 0.72
+DEBUG flwr 2023-05-05 00:31:32,093 | server.py:182 | evaluate_round 34 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:31:32,094 | server.py:218 | fit_round 35: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1337200)[0m Accuracy: 0.698
+DEBUG flwr 2023-05-05 00:32:31,810 | server.py:232 | fit_round 35 received 10 results and 0 failures
+Server-side evaluation loss 0.02531444907784462 / accuracy 0.7213
+INFO flwr 2023-05-05 00:32:35,976 | server.py:119 | fit progress: (35, 0.02531444907784462, {'accuracy': 0.7213}, 2747.569786268985)
+DEBUG flwr 2023-05-05 00:32:35,976 | server.py:168 | evaluate_round 35: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1337862)[0m Accuracy: 0.72
+[2m[36m(launch_and_evaluate pid=1337917)[0m Accuracy: 0.728
+[2m[36m(launch_and_evaluate pid=1337973)[0m Accuracy: 0.696
+[2m[36m(launch_and_evaluate pid=1338031)[0m Accuracy: 0.698
+DEBUG flwr 2023-05-05 00:32:51,087 | server.py:182 | evaluate_round 35 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:32:51,087 | server.py:218 | fit_round 36: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1338089)[0m Accuracy: 0.69
+DEBUG flwr 2023-05-05 00:33:50,515 | server.py:232 | fit_round 36 received 10 results and 0 failures
+Server-side evaluation loss 0.02486395877599716 / accuracy 0.7309
+INFO flwr 2023-05-05 00:33:54,613 | server.py:119 | fit progress: (36, 0.02486395877599716, {'accuracy': 0.7309}, 2826.2067300530616)
+DEBUG flwr 2023-05-05 00:33:54,613 | server.py:168 | evaluate_round 36: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1338748)[0m Accuracy: 0.734
+[2m[36m(launch_and_evaluate pid=1338804)[0m Accuracy: 0.726
+[2m[36m(launch_and_evaluate pid=1338860)[0m Accuracy: 0.724
+[2m[36m(launch_and_evaluate pid=1338918)[0m Accuracy: 0.726
+DEBUG flwr 2023-05-05 00:34:09,753 | server.py:182 | evaluate_round 36 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:34:09,753 | server.py:218 | fit_round 37: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1338975)[0m Accuracy: 0.698
+DEBUG flwr 2023-05-05 00:35:08,834 | server.py:232 | fit_round 37 received 10 results and 0 failures
+Server-side evaluation loss 0.024632131212949753 / accuracy 0.7351
+INFO flwr 2023-05-05 00:35:13,004 | server.py:119 | fit progress: (37, 0.024632131212949753, {'accuracy': 0.7351}, 2904.597872042097)
+DEBUG flwr 2023-05-05 00:35:13,004 | server.py:168 | evaluate_round 37: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1339636)[0m Accuracy: 0.726
+[2m[36m(launch_and_evaluate pid=1339691)[0m Accuracy: 0.728
+[2m[36m(launch_and_evaluate pid=1339748)[0m Accuracy: 0.706
+[2m[36m(launch_and_evaluate pid=1339805)[0m Accuracy: 0.738
+DEBUG flwr 2023-05-05 00:35:27,914 | server.py:182 | evaluate_round 37 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:35:27,914 | server.py:218 | fit_round 38: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1339863)[0m Accuracy: 0.76
+DEBUG flwr 2023-05-05 00:36:28,621 | server.py:232 | fit_round 38 received 10 results and 0 failures
+Server-side evaluation loss 0.02474450346827507 / accuracy 0.7311
+INFO flwr 2023-05-05 00:36:32,753 | server.py:119 | fit progress: (38, 0.02474450346827507, {'accuracy': 0.7311}, 2984.3464866830036)
+DEBUG flwr 2023-05-05 00:36:32,753 | server.py:168 | evaluate_round 38: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1340522)[0m Accuracy: 0.774
+[2m[36m(launch_and_evaluate pid=1340577)[0m Accuracy: 0.734
+[2m[36m(launch_and_evaluate pid=1340636)[0m Accuracy: 0.736
+[2m[36m(launch_and_evaluate pid=1340693)[0m Accuracy: 0.728
+DEBUG flwr 2023-05-05 00:36:47,831 | server.py:182 | evaluate_round 38 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:36:47,831 | server.py:218 | fit_round 39: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1340750)[0m Accuracy: 0.718
+DEBUG flwr 2023-05-05 00:37:47,629 | server.py:232 | fit_round 39 received 10 results and 0 failures
+Server-side evaluation loss 0.02392013354599476 / accuracy 0.7444
+INFO flwr 2023-05-05 00:37:51,785 | server.py:119 | fit progress: (39, 0.02392013354599476, {'accuracy': 0.7444}, 3063.3786782680545)
+DEBUG flwr 2023-05-05 00:37:51,785 | server.py:168 | evaluate_round 39: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1341411)[0m Accuracy: 0.734
+[2m[36m(launch_and_evaluate pid=1341466)[0m Accuracy: 0.708
+[2m[36m(launch_and_evaluate pid=1341522)[0m Accuracy: 0.718
+[2m[36m(launch_and_evaluate pid=1341581)[0m Accuracy: 0.748
+DEBUG flwr 2023-05-05 00:38:06,994 | server.py:182 | evaluate_round 39 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:38:06,994 | server.py:218 | fit_round 40: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1341638)[0m Accuracy: 0.77
+DEBUG flwr 2023-05-05 00:39:07,325 | server.py:232 | fit_round 40 received 10 results and 0 failures
+Server-side evaluation loss 0.02390930625498295 / accuracy 0.7494
+INFO flwr 2023-05-05 00:39:11,454 | server.py:119 | fit progress: (40, 0.02390930625498295, {'accuracy': 0.7494}, 3143.0476997501682)
+DEBUG flwr 2023-05-05 00:39:11,454 | server.py:168 | evaluate_round 40: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1342297)[0m Accuracy: 0.74
+[2m[36m(launch_and_evaluate pid=1342352)[0m Accuracy: 0.728
+[2m[36m(launch_and_evaluate pid=1342409)[0m Accuracy: 0.76
+[2m[36m(launch_and_evaluate pid=1342466)[0m Accuracy: 0.72
+DEBUG flwr 2023-05-05 00:39:26,737 | server.py:182 | evaluate_round 40 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:39:26,738 | server.py:218 | fit_round 41: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1342523)[0m Accuracy: 0.73
+DEBUG flwr 2023-05-05 00:40:26,910 | server.py:232 | fit_round 41 received 10 results and 0 failures
+Server-side evaluation loss 0.023583931766450406 / accuracy 0.7512
+INFO flwr 2023-05-05 00:40:31,045 | server.py:119 | fit progress: (41, 0.023583931766450406, {'accuracy': 0.7512}, 3222.6387372100726)
+DEBUG flwr 2023-05-05 00:40:31,045 | server.py:168 | evaluate_round 41: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1343183)[0m Accuracy: 0.744
+[2m[36m(launch_and_evaluate pid=1343239)[0m Accuracy: 0.724
+[2m[36m(launch_and_evaluate pid=1343295)[0m Accuracy: 0.744
+[2m[36m(launch_and_evaluate pid=1343354)[0m Accuracy: 0.786
+DEBUG flwr 2023-05-05 00:40:46,225 | server.py:182 | evaluate_round 41 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:40:46,226 | server.py:218 | fit_round 42: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1343410)[0m Accuracy: 0.77
+DEBUG flwr 2023-05-05 00:41:45,874 | server.py:232 | fit_round 42 received 10 results and 0 failures
+Server-side evaluation loss 0.023427532669901847 / accuracy 0.7539
+INFO flwr 2023-05-05 00:41:50,053 | server.py:119 | fit progress: (42, 0.023427532669901847, {'accuracy': 0.7539}, 3301.646625059191)
+DEBUG flwr 2023-05-05 00:41:50,053 | server.py:168 | evaluate_round 42: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1344070)[0m Accuracy: 0.744
+[2m[36m(launch_and_evaluate pid=1344126)[0m Accuracy: 0.74
+[2m[36m(launch_and_evaluate pid=1344182)[0m Accuracy: 0.78
+[2m[36m(launch_and_evaluate pid=1344239)[0m Accuracy: 0.76
+DEBUG flwr 2023-05-05 00:42:05,174 | server.py:182 | evaluate_round 42 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:42:05,174 | server.py:218 | fit_round 43: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1344297)[0m Accuracy: 0.752
+DEBUG flwr 2023-05-05 00:43:04,542 | server.py:232 | fit_round 43 received 10 results and 0 failures
+Server-side evaluation loss 0.02280344502031803 / accuracy 0.7591
+INFO flwr 2023-05-05 00:43:08,669 | server.py:119 | fit progress: (43, 0.02280344502031803, {'accuracy': 0.7591}, 3380.2625069729984)
+DEBUG flwr 2023-05-05 00:43:08,669 | server.py:168 | evaluate_round 43: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1344956)[0m Accuracy: 0.752
+[2m[36m(launch_and_evaluate pid=1345011)[0m Accuracy: 0.734
+[2m[36m(launch_and_evaluate pid=1345068)[0m Accuracy: 0.736
+[2m[36m(launch_and_evaluate pid=1345125)[0m Accuracy: 0.758
+DEBUG flwr 2023-05-05 00:43:24,418 | server.py:182 | evaluate_round 43 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:43:24,418 | server.py:218 | fit_round 44: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1345184)[0m Accuracy: 0.72
+DEBUG flwr 2023-05-05 00:44:24,525 | server.py:232 | fit_round 44 received 10 results and 0 failures
+Server-side evaluation loss 0.02295274772197008 / accuracy 0.7571
+INFO flwr 2023-05-05 00:44:28,679 | server.py:119 | fit progress: (44, 0.02295274772197008, {'accuracy': 0.7571}, 3460.2725502380636)
+DEBUG flwr 2023-05-05 00:44:28,679 | server.py:168 | evaluate_round 44: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1345844)[0m Accuracy: 0.79
+[2m[36m(launch_and_evaluate pid=1345900)[0m Accuracy: 0.756
+[2m[36m(launch_and_evaluate pid=1345956)[0m Accuracy: 0.76
+[2m[36m(launch_and_evaluate pid=1346013)[0m Accuracy: 0.748
+DEBUG flwr 2023-05-05 00:44:43,760 | server.py:182 | evaluate_round 44 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:44:43,761 | server.py:218 | fit_round 45: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1346072)[0m Accuracy: 0.724
+DEBUG flwr 2023-05-05 00:45:42,540 | server.py:232 | fit_round 45 received 10 results and 0 failures
+Server-side evaluation loss 0.02306365874260664 / accuracy 0.7591
+INFO flwr 2023-05-05 00:45:46,672 | server.py:119 | fit progress: (45, 0.02306365874260664, {'accuracy': 0.7591}, 3538.2661595710088)
+DEBUG flwr 2023-05-05 00:45:46,672 | server.py:168 | evaluate_round 45: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1346729)[0m Accuracy: 0.732
+[2m[36m(launch_and_evaluate pid=1346785)[0m Accuracy: 0.758
+[2m[36m(launch_and_evaluate pid=1346841)[0m Accuracy: 0.724
+[2m[36m(launch_and_evaluate pid=1346900)[0m Accuracy: 0.746
+DEBUG flwr 2023-05-05 00:46:01,832 | server.py:182 | evaluate_round 45 received 5 results and 0 failures
+DEBUG flwr 2023-05-05 00:46:01,832 | server.py:218 | fit_round 46: strategy sampled 10 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1346956)[0m Accuracy: 0.754
+DEBUG flwr 2023-05-05 00:47:01,538 | server.py:232 | fit_round 46 received 10 results and 0 failures
+Server-side evaluation loss 0.022615871477127077 / accuracy 0.7635
+INFO flwr 2023-05-05 00:47:05,701 | server.py:119 | fit progress: (46, 0.022615871477127077, {'accuracy': 0.7635}, 3617.2947983141057)
+DEBUG flwr 2023-05-05 00:47:05,701 | server.py:168 | evaluate_round 46: strategy sampled 5 clients (out of 10)
+[2m[36m(launch_and_evaluate pid=1347621)[0m Accuracy: 0.798
+[2m[36m(launch_and_evaluate pid=1347677)[0m Accuracy: 0.74
