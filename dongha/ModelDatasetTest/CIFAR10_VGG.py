@@ -31,6 +31,8 @@ from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import CIFAR10
 import torchvision.models
 
+from sklearn.metrics import f1_score, precision_score, recall_score
+
 import os
 # ���⼭�� 10���� ���� �� ��, �ϳ��� train ��.
 import pandas as pd
@@ -154,6 +156,8 @@ def test(net, testloader):
     """Evaluate the network on the entire test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
+    pred = torch.Tensor([])
+    target = torch.Tensor([])
     net.eval()
     with torch.no_grad():
         for images, labels in testloader:
@@ -163,9 +167,14 @@ def test(net, testloader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            pred = torch.cat([pred, predicted.cpu()], dim=0)
+            target = torch.cat([target, labels.cpu()], dim=0)
     loss /= len(testloader.dataset)
     accuracy = correct / total
-    return loss, accuracy
+    recall = recall_score(pred, target, average='macro')
+    precision = precision_score(pred, target, average='macro')
+    f1 = f1_score(pred, target, average='macro')
+    return loss, {"loss": loss, "accuracy": accuracy, "recall": recall, "precision": precision, "f1_score": f1}
 
 
 # %% [markdown]
@@ -177,8 +186,11 @@ def get_parameters(net) -> List[np.ndarray]:
 
 def set_parameters(net, parameters: List[np.ndarray]):
     params_dict = zip(net.state_dict().keys(), parameters)
+    for k, v in params_dict:
+        continue
     state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
-    net.load_state_dict(state_dict, strict=True)
+
+    net.load_state_dict(state_dict, strict=False)
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, net, trainloader, valloader):
@@ -196,9 +208,8 @@ class FlowerClient(fl.client.NumPyClient):
 
     def evaluate(self, parameters, config):
         set_parameters(self.net, parameters)
-        loss, accuracy = test(self.net, self.valloader)
-        print(f"Accuracy: {accuracy}")
-        return float(loss), len(self.valloader), {"accuracy": float(accuracy)}
+        loss, metrics = test(self.net, self.valloader)
+        return float(loss), len(self.valloader), metrics
     
 def client_fn(cid: str) -> FlowerClient:
     """Create a Flower client representing a single organization."""
@@ -216,12 +227,17 @@ def client_fn(cid: str) -> FlowerClient:
     return FlowerClient(net, trainloader, valloader)
     
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
-    # Multiply accuracy of each client by number of examples used
-    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
-    examples = [num_examples for num_examples, _ in metrics]
 
+    averages = {}
+    targets = ["accuracy", "recall", "precision", "f1_score"]
+
+    total_examples = sum([num_examples for num_examples, _ in metrics])
+    for target in targets:
+        target_distributed = [num_examples * m[target] for num_examples, m in metrics]
+        averages[target] = sum(target_distributed) / total_examples
+    
     # Aggregate and return custom metric (weighted average)
-    return {"accuracy": sum(accuracies) / sum(examples)}
+    return averages
 
 # The `evaluate` function will be by Flower called after every round
 def evaluate(
@@ -231,17 +247,18 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
     # net = Net().to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
-    loss, accuracy = test(net, full_testloader) # Test total test_loader
-    print(f"Server-side evaluation loss {loss} / accuracy {accuracy}")
-    return loss, {"accuracy": accuracy}
+    loss, metrics = test(net, full_testloader) # Test total test_loader
+    print(f"Server-side evaluation loss {loss} / accuracy {metrics['accuracy']}")
+    return loss, metrics
 
 
 # %%
 models = {
-    # 'Densenet121' : "densenet121", # fails
-    # 'Resnet18' : "resnet18", # fails
-    # 'Resnet34' : "resnet34", # fails
-    # 'Resnet50' : "resnet50", # fails
+    'Densenet121' : "densenet121",
+    'Mobilenet_v2': "mobilenet_v2",
+    'Resnet18' : "resnet18",
+    'Resnet34' : "resnet34",
+    'Resnet50' : "resnet50",
     'VGG11' : "vgg11", 
     'VGG13' : "vgg13", 
     'VGG16' : "vgg16", 
@@ -260,16 +277,14 @@ for key, value in models.items():
 
     for epoch in range(EPOCH):
         train(net, full_split_trainloader, 1)
-        loss, accuracy = test(net, full_testloader) # Federated aggregation model tests full_testloader
-        print(f"{key} Epoch {epoch+1}: validation loss {loss}, accuracy {accuracy}")
+        loss, c_metrics = test(net, full_testloader) # Federated aggregation model tests full_testloader
+        print(f"{key} Epoch {epoch+1}: validation loss {loss}, accuracy {c_metrics['accuracy']}")
         df_centralized = pd.DataFrame()
         df_centralized['round'] = epoch+1,
         df_centralized['Centralized'] = 'Centralized',
         df_centralized['model'] = key
-        df_centralized['c_loss'] = loss,
-        df_centralized['d_loss'] = 0.0,
-        df_centralized['c_accuracy'] = accuracy,
-        df_centralized['d_accuracy'] = 0.0
+        for metric in c_metrics:
+            df_centralized[f"c_{metric}"] = c_metrics[metric]
         df_final = pd.concat([df_final, df_centralized], axis=0)
     df_centralized.to_csv('../result/result_c_'+key+'.csv', index=False)
     torch.save(net.state_dict(), trained_path)
