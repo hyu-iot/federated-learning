@@ -22000,3 +22000,8 @@ Files already downloaded and verified
 Files already downloaded and verified
 50000
 Centralized: Densenet121
+/home/dongha/anaconda3/envs/fl/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1344: UndefinedMetricWarning: Recall is ill-defined and being set to 0.0 in labels with no true samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+Densenet121 Epoch 1: validation loss 0.10610500628948212, accuracy 0.1898
+Densenet121 Epoch 2: validation loss 0.09452771346569061, accuracy 0.2557
+Densenet121 Epoch 3: validation loss 0.08620870918035507, accuracy 0.3041
