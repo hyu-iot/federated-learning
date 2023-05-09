@@ -35,7 +35,7 @@ BATCH_SIZE = 128
 num_rounds = 100
 num_pretrains = 10000
 pretrain_path = f"../result/best_pretrain_ckpt_{num_pretrains}.pth"
-result_path = "../result/result.csv"
+result_path = "../result/result_exp_fl_scale.csv"
 fl_scales = [0.25, 0.5, 1, 2, 4]
 idx_fl_scale = 0
 
@@ -172,59 +172,59 @@ def test(net, testloader, criterion):
 
 df_final = pd.DataFrame()
 
-#######################
-# Centralized Setting #
-#######################
-print("Experiment on centralized manner.")
+# #######################
+# # Centralized Setting #
+# #######################
+# print("Experiment on centralized manner.")
 
-if (os.path.exists(result_path)):
-    df_final = pd.read_csv(result_path)
-    removeIndex = df_final[df_final['strategy'] == 'Central'].index
-    df_final.drop(removeIndex, inplace=True)
-else:
-    df_final = pd.DataFrame()
+# if (os.path.exists(result_path)):
+#     df_final = pd.read_csv(result_path)
+#     removeIndex = df_final[df_final['strategy'] == 'Central'].index
+#     df_final.drop(removeIndex, inplace=True)
+# else:
+#     df_final = pd.DataFrame()
 
 
-net = Net().to(DEVICE)
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.01,
-                      momentum=0.5)
+# net = Net().to(DEVICE)
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.SGD(net.parameters(), lr=0.01,
+#                       momentum=0.5)
 
-best_acc = 0
-for epoch in range(1, num_rounds + 1):
-    print(f"Epoch: {epoch}")
-    train(net, preloader, criterion, optimizer, epochs=1)
-    test_loss, metrics = test(net, testloader, criterion)
-    if epoch % 10 == 0:
-        print(f"[Epoch {epoch}]", end="")
-        for k, v in metrics.items():
-            print(f"{k}: {v}", end=" ")
-        print()
-    if best_acc < metrics['accuracy']:
-        print(f'Saving...(epoch {epoch})')
-        state = {
-            'net': net.state_dict(),
-            'acc': metrics['accuracy'],
-            'epoch': epoch,
-        }
-        torch.save(state, pretrain_path)
-        best_acc = metrics['accuracy']
+# best_acc = 0
+# for epoch in range(1, num_rounds + 1):
+#     print(f"Epoch: {epoch}")
+#     train(net, preloader, criterion, optimizer, epochs=1)
+#     test_loss, metrics = test(net, testloader, criterion)
+#     if epoch % 10 == 0:
+#         print(f"[Epoch {epoch}]", end="")
+#         for k, v in metrics.items():
+#             print(f"{k}: {v}", end=" ")
+#         print()
+#     if best_acc < metrics['accuracy']:
+#         print(f'Saving...(epoch {epoch})')
+#         state = {
+#             'net': net.state_dict(),
+#             'acc': metrics['accuracy'],
+#             'epoch': epoch,
+#         }
+#         torch.save(state, pretrain_path)
+#         best_acc = metrics['accuracy']
     
-    df_result = pd.DataFrame()
-    df_result['round'] = epoch,
-    df_result['strategy'] = 'Central',
-    df_result['fl_scale'] = 0.0
-    for k, v in metrics.items():
-        df_result[f"c_{k}"] = v
+#     df_result = pd.DataFrame()
+#     df_result['round'] = epoch,
+#     df_result['strategy'] = 'Central',
+#     df_result['fl_scale'] = 0.0
+#     for k, v in metrics.items():
+#         df_result[f"c_{k}"] = v
 
-    df_result['d_accuracy'] = 0.0
+#     df_result['d_accuracy'] = 0.0
     
 
-    df_final = pd.concat([df_final, df_result], axis=0)
+#     df_final = pd.concat([df_final, df_result], axis=0)
 
-loss, metrics = test(net, testloader, criterion)
-print(f"Final test set performance: ")
-for k, v in metrics.items(): print(f"{k}: {v}")
+# loss, metrics = test(net, testloader, criterion)
+# print(f"Final test set performance: ")
+# for k, v in metrics.items(): print(f"{k}: {v}")
 
 
 net_pretrained = Net()
@@ -258,7 +258,7 @@ class FlowerClient(fl.client.NumPyClient):
     def fit(self, parameters, config):
         set_parameters(self.net, parameters)
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.SGD(net.parameters(), lr=0.01,
+        optimizer = optim.SGD(self.net.parameters(), lr=0.01,
                             momentum=0.5)
         train(self.net, self.trainloader, criterion, optimizer, epochs=1)
         return get_parameters(self.net), len(self.trainloader), {}
@@ -356,11 +356,23 @@ for i, scale in enumerate(fl_scales):
     idx_fl_scale = i
     print(f"Simulation start....\nFL scale: {scale}")    
     
+    strategy = fl.server.strategy.FedAvg(
+        fraction_fit=1.0,
+        fraction_evaluate=0.5,
+        min_fit_clients=10,
+        min_evaluate_clients=5,
+        min_available_clients=10,
+        evaluate_metrics_aggregation_fn=weighted_average,   # aggregate evaluation of local model
+        evaluate_fn=evaluate,   # evaluate global model
+        #initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net())),
+        initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(net_pretrained)),
+    )
+
     hist = fl.simulation.start_simulation(
         client_fn=client_fn,
         num_clients=NUM_CLIENTS,
         config=fl.server.ServerConfig(num_rounds=num_rounds),
-        strategy=fedavg,
+        strategy=strategy,
         client_resources=client_resources,
     )    
 
