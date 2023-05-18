@@ -28,6 +28,7 @@ from models import Net
 from utils import train, test, get_parameters, set_parameters
 from client import FlowerClient
 from strategy import get_strategy
+from data import DataManager
 
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -44,54 +45,7 @@ print(
 )
 
 
-
-def load_datasets():
-    # Download and transform CIFAR-10 (train and test)
-
-    transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-
-    transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-
-    trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
-    testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
-
-    trainloader = DataLoader(trainset, batch_size=BATCH_SIZE, shuffle=True)
-    testloader = DataLoader(testset, batch_size=BATCH_SIZE, shuffle=True)
-
-    # Split training set into `num_clients` partitions to simulate different local datasets
-    partition_size = len(trainset) // NUM_CLIENTS
-    lengths = [partition_size] * NUM_CLIENTS
-    datasets = random_split(trainset, lengths, torch.Generator().manual_seed(42))
-
-    # Split each partition into train/val and create DataLoader
-    trainloaders = []
-    valloaders = []
-    for ds in datasets:
-        len_val = len(ds) // 10  # 10 % validation set
-        len_train = len(ds) - len_val
-        lengths = [len_train, len_val]
-        ds_train, ds_val = random_split(ds, lengths, torch.Generator().manual_seed(42))
-        trainloaders.append(DataLoader(ds_train, batch_size=32, shuffle=True))
-        valloaders.append(DataLoader(ds_val, batch_size=32))
-    testloader = DataLoader(testset, batch_size=32)
-
-    print(f"Trainset: {len(trainset)}, Testset: {len(testset)}")
-    print(f"Trainloader: {len(trainloader)}, Testloader: {len(testloader)}")
-    return trainloader, testloader, trainloaders, valloaders
-
-#trainloaders, valloaders, testloader = load_datasets(divide=False)
-trainloader, testloader, trainloaders, valloaders = load_datasets()
-
-
-
+dm = DataManager()
 df_final = pd.DataFrame()
 
 #######################
@@ -115,8 +69,8 @@ optimizer = optim.SGD(net.parameters(), lr=0.01,
 best_acc = 0
 for epoch in range(1, num_rounds + 1):
     print(f"Epoch: {epoch}")
-    train(DEVICE, net, trainloader, criterion, optimizer, epochs=1)
-    test_loss, metrics = test(DEVICE, net, testloader, criterion)
+    train(DEVICE, net, dm.trainloader, criterion, optimizer, epochs=1)
+    test_loss, metrics = test(DEVICE, net, dm.testloader, criterion)
     if epoch % 10 == 0:
         print(f"[Epoch {epoch}]", end="")
         for k, v in metrics.items():
@@ -143,26 +97,26 @@ for epoch in range(1, num_rounds + 1):
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-loss, metrics = test(DEVICE, net, testloader, criterion)
+loss, metrics = test(DEVICE, net, dm.testloader, criterion)
 print(f"Final test set performance: ")
 for k, v in metrics.items(): print(f"{k}: {v}")
 
-
+dl_client_train, dl_client_val = dm.get_FL_data(total=50000)
+print(f"number of data for client: {len(dl_client_train)}")
 
 def client_fn(cid: str) -> FlowerClient:
     """Create a Flower client representing a single organization."""
+    global idx_fl_scale
 
     # Load model
     net = Net().to(DEVICE)
-    #net = ResNet50().to(DEVICE)
 
-    # Load data (CIFAR-10)
-    # Note: each client gets a different trainloader/valloader, so each client 
-    # will train and evaluate on their own unique data
-    trainloader = trainloaders[int(cid)]
-    valloader = valloaders[int(cid)]
+    trainloader = dl_client_train[int(cid)]
+    valloader = dl_client_val[int(cid)]
+
     # Create a single Flower client representing a single organization
     return FlowerClient(DEVICE, net, trainloader, valloader)
+
 
 def evaluate(
     server_round: int, parameters: fl.common.NDArrays, config: Dict[str, fl.common.Scalar]
@@ -170,10 +124,9 @@ def evaluate(
 
     criterion = nn.CrossEntropyLoss()
     net = Net().to(DEVICE)
-    #net = ResNet50().to(DEVICE)
     set_parameters(net, parameters)
     net = net.to(DEVICE)
-    loss, metrics = test(DEVICE, net, testloader, criterion)
+    loss, metrics = test(DEVICE, net, dm.testloader, criterion)
     
     return loss, metrics # The return type must be (loss, metric tuple) form
 
