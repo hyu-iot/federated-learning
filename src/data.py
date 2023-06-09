@@ -1,10 +1,10 @@
 import torch
 import torchvision.transforms as transforms
-from torchvision.datasets import CIFAR10
+from torchvision.datasets import CIFAR10, CIFAR100
 from torch.utils.data import DataLoader, random_split
 
 class DataManager():
-    def __init__(self, dataset='cifar10', batch_size=32, num_pretrain=0, num_clients = 10, num_federated_data=[1]):
+    def __init__(self, dataset='cifar10', batch_size=32, num_pretrain=0, num_clients=10, num_federated_data=[1]):
         self.dataset = dataset
         self.trainloader, self.testloader, self.preloader, self.dl_clients = self.load_data(
             dataset=dataset,
@@ -25,6 +25,7 @@ class DataManager():
 
         load_func = {
             'cifar10': self.load_cifar10,
+            'cifar100' : self.load_cifar100,
         }    
 
         trainset, testset = load_func[dataset]()
@@ -70,8 +71,6 @@ class DataManager():
         return trainloader, testloader, preloader, dl_clients
 
 
-
-
     def load_cifar10(self):
         # Download and transform CIFAR-10 (train and test)
 
@@ -89,5 +88,23 @@ class DataManager():
 
         trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
         testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
+
+        return trainset, testset
+
+    def load_cifar100(self):
+        # Download and transform CIFAR-100 (train and test)
+        transform_train = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4865, 0.4409), (0.2673, 0.2564, 0.2762)),
+        ])
+        transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4865, 0.4409), (0.2673, 0.2564, 0.2762)),
+        ])
+    
+        trainset = CIFAR100("./dataset", train=True, download=True, transform=transform_train)
+        testset = CIFAR100("./dataset", train=False, download=True, transform=transform_test)
 
         return trainset, testset
