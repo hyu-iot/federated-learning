@@ -19,7 +19,7 @@ class Server:
         logging.info('Starting...')
         
         self.create_directory()
-        self.load_data()
+        # self.load_data()
 
     def run(self):
         # self.iterate_simulation()
