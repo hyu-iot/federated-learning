@@ -24,7 +24,7 @@
             }
         }
     },
-    "strategy" : ["FedAvg", "FedAvgM", "FedOpt", "FedProx"],
+    "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {
         "rounds": 100,
         "epochs": 5,
@@ -33,6 +33,11 @@
     "paths" : {
         "data": "./data",
         "models": "./models"
+    },
+    "visualization" : {
+        "model" : ["VGG19", "Resnet50"],
+        "strategy" : ["Centralized", "Federated"],
+        "metrics" : ["f1-score", "accuracy"]
     },
     "server": "basic"
 }

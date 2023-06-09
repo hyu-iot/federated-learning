@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+from visualization import Visualization
 
 class Server:
     def __init__(self, config):
@@ -12,12 +13,15 @@ class Server:
         self.load_data()
 
     def run(self):
-        self.iterate_simulation()
+        # self.iterate_simulation()
+        vis = Visualization(self.config, self.mydir)
+        vis.run()
+
         pass
 
 
     def load_data(self):
-        print(self.config.models)
+        # print(self.config.models)
         pass
 
     # Make the dirctory named using the timestamp.
@@ -26,8 +30,7 @@ class Server:
             os.makedirs("./result")
         self.mydir = os.path.join(os.getcwd(), "./result/", datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
         os.makedirs(self.mydir)
-        # print(self.mydir)
-        
+
     def create_simulation(self):
         pass
     def iterate_simulation(self):
