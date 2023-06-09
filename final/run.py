@@ -1,5 +1,7 @@
 import argparse
 import os
+import config
+import Server
 
 # Set up parser
 parser = argparse.ArgumentParser()
@@ -13,6 +15,11 @@ args = parser.parse_args()
 
 def main():
     """Run a federated learning simulation"""
+    fl_config = config.Config(args.config)
+    
+    server = Server.Server(fl_config)
+    server.run()
+    # name = 1
     pass
 
 

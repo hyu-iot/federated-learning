@@ -8,31 +8,31 @@
         "target": "cifar10",
         "batch_size": 32,
         "IID": true,
-        "random_seed": 1234,
+        "random_seed": 1234
     },
     "model": {
         "vgg19": {
             "pretrained_path": "",
             "args": {
-                "num_classes": 10,
+                "num_classes": 10
             }
         },
         "resnet50": {
             "pretrained_path": "",
             "args": {
-                "num_classes" : 10,
+                "num_classes" : 10
             }
-        },
+        }
     },
     "strategy" : ["FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {
         "rounds": 100,
         "epochs": 5,
-        "learning_rate": 0.01,
+        "learning_rate": 0.01
     },
     "paths" : {
         "data": "./data",
-        "models": "./models",
+        "models": "./models"
     },
-    "server": "basic",
+    "server": "basic"
 }
