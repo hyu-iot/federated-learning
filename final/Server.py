@@ -1,4 +1,6 @@
 import logging
+import os
+from datetime import datetime
 
 class Server:
     def __init__(self, config):
@@ -6,7 +8,7 @@ class Server:
 
         logging.info('Starting...')
         
-        self.create_folder()
+        self.create_directory()
         self.load_data()
 
     def run(self):
@@ -18,8 +20,14 @@ class Server:
         print(self.config.models)
         pass
 
-    def create_folder(self):
-        pass
+    # Make the dirctory named using the timestamp.
+    def create_directory(self):
+        if not os.path.exists("./result"):
+            os.makedirs("./result")
+        self.mydir = os.path.join(os.getcwd(), "./result/", datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        os.makedirs(self.mydir)
+        # print(self.mydir)
+        
     def create_simulation(self):
         pass
     def iterate_simulation(self):
