@@ -10,8 +10,8 @@ import torch
 from load_data import DataManager
 from client import FlowerClient
 from utils import train, test, get_parameters, set_parameters
-from strategy import get_strategy
-
+from strategy.strategy import get_strategy
+from server.basic_simulation import Simulation_Unit
 
 class Server:
     def __init__(self, config):
@@ -20,14 +20,18 @@ class Server:
         logging.info('Starting...')
         
         self.create_directory()
-        # self.load_data()
+        self.load_data()
 
     def run(self):
         # self.iterate_simulation()
-        vis = Visualization(self.config, self.mydir)
+        config = self.config
+        for strategy in config.strategies:
+            for modelname, model_config in config.models.items():
+                simunit = Simulation_Unit(self.__make_unit_simulation_config(strategy, modelname, model_config))
+                simunit.run()
+                
+        vis = Visualization(config, self.mydir)
         vis.run()
-
-        pass
 
 
     def load_data(self):
@@ -45,9 +49,6 @@ class Server:
         dm = DataManager(**data_config)
         self.trainloader, self.testloader, self.dl_clients, _ = dm.get_data()
 
-        print(self.config.models)
-        pass
-
 
     # Make the dirctory named using the timestamp.
     def create_directory(self):
@@ -57,19 +58,30 @@ class Server:
         os.makedirs(self.mydir)
         shutil.copyfile('./configs/config.json', self.mydir +'/config.json')
 
-    def create_simulation(self):
 
-        pass
-    def iterate_simulation(self):
-        for key in self.config.models:
-            for strategy in self.config.strategies:
-                # print(key)
-                # print(strategy)
-                self.create_simulation()
-        
-
-    def exec_unit_simulation(self, model, strategy):
-        DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+    def __make_unit_simulation_config(self, strategy, modelname, model_config):
         config = self.config
-
+        simulation_config = {
+            "num_clients": config.clients.total,
+            "num_rounds": config.fl.rounds,
+            "strategy": strategy,
+            "model": {
+                "modelname": modelname,
+                **model_config,
+            },
+            "data": {
+                "trainloader": self.trainloader,
+                "testloader" : self.testloader,
+                "clients": self.dl_clients
+            },
+            "train_config": {
+                "lr": config.fl.learning_rate,
+                "momentum": config.fl.momentum,
+                "weight_decay": config.fl.weight_decay
+            },
+            "paths": {
+                "models": "./models",
+                "result_dir": self.mydir,
+            }
+        }
+        return simulation_config    

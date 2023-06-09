@@ -36,8 +36,10 @@ class Config(object):
         self.strategies = config['strategy']
 
         # --- Federated learning ---
-        fields = ['rounds', 'epochs', 'learning_rate']
-        defaults = (0, 0, 0)
+        fields = ['rounds', 'epochs', 'learning_rate', 'momentum', 'weight_decay',
+                  'fraction_fit', 'fraction_evaluate', 'min_fit_clients', 
+                  'min_evaluate_clients', 'min_available_clients']
+        defaults = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         params = [config['federated_learning'].get(field, defaults[i])
                   for i, field in enumerate(fields)]
         self.fl = namedtuple('fl', fields)(*params)        

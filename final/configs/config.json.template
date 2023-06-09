@@ -8,7 +8,6 @@
         "dataset": "cifar10",
         "batch_size": 32,
         "remain_ratio": 0.0,
-        "IID": true,
         "random_seed": 1234,
     },
     "model": {
@@ -30,10 +29,17 @@
         "rounds": 100,
         "epochs": 5,
         "learning_rate": 0.01,
+        "momentum": 0.09,
+        "weight_decay": 5e-4,
     },
     "paths" : {
         "data": "./data",
         "models": "./models",
     },
+    "visualization" : {
+        "model" : ["VGG19", "Resnet50"],
+        "strategy" : ["Centralized", "Federated"],
+        "metrics" : ["f1-score", "accuracy"]
+    },    
     "server": "basic",
 }

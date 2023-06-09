@@ -34,7 +34,7 @@ class DataManager():
         remain_ratio = int(remain_ratio) if remain_ratio > 1 else int(len(trainset) * remain_ratio)
 
         if remain_ratio > 0:
-            remainset, ds_target = random_split(trainset, [remain_ratio, len(trainset) - remain_ratio], torch.Generator().manual_seed(42))
+            remainset, ds_target = random_split(trainset, [remain_ratio, len(trainset) - remain_ratio], torch.Generator().manual_seed(random_seed))
             
         else:
             remainset, ds_target = None, trainset
@@ -46,9 +46,10 @@ class DataManager():
         dl_clients = []
         
         for ds_client in ds_clients:
-            len_val = len(ds_client) * validation_ratio
+            len_val = int(len(ds_client) * validation_ratio)
             len_train = len(ds_client) - len_val
 
+            
             ds_train, ds_val = random_split(ds_client, [len_train, len_val], torch.Generator().manual_seed(random_seed))
             dl_clients.append({
                 'train': DataLoader(ds_train, batch_size=batch_size, shuffle=True),
@@ -72,8 +73,9 @@ class DataManager():
             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
         ])
 
-        trainset = CIFAR10("./dataset", train=True, download=True, transform=transform_train)
-        testset = CIFAR10("./dataset", train=False, download=True, transform=transform_test)
+        # TODO: make the first parameter (path) to be defined from user
+        trainset = CIFAR10("./data", train=True, download=True, transform=transform_train)
+        testset = CIFAR10("./data", train=False, download=True, transform=transform_test)
 
         return trainset, testset
 
@@ -90,8 +92,9 @@ class DataManager():
             transforms.Normalize((0.5071, 0.4865, 0.4409), (0.2673, 0.2564, 0.2762)),
         ])
     
-        trainset = CIFAR100("./dataset", train=True, download=True, transform=transform_train)
-        testset = CIFAR100("./dataset", train=False, download=True, transform=transform_test)
+        # TODO: make the first parameter (path) to be defined from user
+        trainset = CIFAR100("./data", train=True, download=True, transform=transform_train)
+        testset = CIFAR100("./data", train=False, download=True, transform=transform_test)
 
         return trainset, testset
 
