@@ -23,8 +23,8 @@ class Config(object):
         self.clients = namedtuple('clients', fields)(*params)
 
         # --- Data ---
-        fields = ['total', 'per_round', 'validation_ratio']
-        defaults = (0, 0, 0.0)
+        fields = ['dataset', 'batch_size', 'remain_ratio', 'random_seed']
+        defaults = ('cifar10', 32, 0.0, 1234)
         params = [config['data'].get(field, defaults[i])
                   for i, field in enumerate(fields)]
         self.data = namedtuple('data', fields)(*params)
