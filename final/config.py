@@ -48,3 +48,6 @@ class Config(object):
         params = [config['clients'].get(field, defaults[i])
                   for i, field in enumerate(fields)]
         self.paths = namedtuple('paths', fields)(*params)
+
+        # --- Visualization ---
+        self.visualization = config['visualization']

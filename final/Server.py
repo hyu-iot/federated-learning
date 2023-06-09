@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+from visualization import Visualization
 
 import torch
 
@@ -21,7 +22,10 @@ class Server:
         self.load_data()
 
     def run(self):
-        self.iterate_simulation()
+        # self.iterate_simulation()
+        vis = Visualization(self.config, self.mydir)
+        vis.run()
+
         pass
 
 
@@ -50,8 +54,7 @@ class Server:
             os.makedirs("./result")
         self.mydir = os.path.join(os.getcwd(), "./result/", datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
         os.makedirs(self.mydir)
-        # print(self.mydir)
-        
+
     def create_simulation(self):
 
         pass
