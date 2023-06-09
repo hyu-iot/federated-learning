@@ -5,7 +5,7 @@ import Server
 
 # Set up parser
 parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--config', type=str, default='./config.json',
+parser.add_argument('-c', '--config', type=str, default='./configs/config.json',
                     help='Federated learning configuration file.')
 parser.add_argument('-l', '--log', type=str, default='INFO',
                     help='Log messages level.')
