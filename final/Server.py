@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 from visualization import Visualization
+import shutil
 
 import torch
 
@@ -54,6 +55,7 @@ class Server:
             os.makedirs("./result")
         self.mydir = os.path.join(os.getcwd(), "./result/", datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
         os.makedirs(self.mydir)
+        shutil.copyfile('./configs/config.json', self.mydir +'/config.json')
 
     def create_simulation(self):
 
