@@ -2,7 +2,13 @@ import logging
 import os
 from datetime import datetime
 
+import torch
+
+
 from load_data import DataManager
+from client import FlowerClient
+from utils import train, test, get_parameters, set_parameters
+from strategy import get_strategy
 
 
 class Server:
@@ -37,6 +43,7 @@ class Server:
         print(self.config.models)
         pass
 
+
     # Make the dirctory named using the timestamp.
     def create_directory(self):
         if not os.path.exists("./result"):
@@ -46,6 +53,7 @@ class Server:
         # print(self.mydir)
         
     def create_simulation(self):
+
         pass
     def iterate_simulation(self):
         for key in self.config.models:
@@ -53,7 +61,10 @@ class Server:
                 # print(key)
                 # print(strategy)
                 self.create_simulation()
+        
 
-        pass
+    def exec_unit_simulation(self, model, strategy):
+        DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+        config = self.config
 
