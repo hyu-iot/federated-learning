@@ -5,8 +5,9 @@
         "validation_ratio": 0.1
     },
     "data": {
-        "target": "cifar10",
+        "dataset": "cifar10",
         "batch_size": 32,
+        "remain_ratio": 0.0,
         "IID": true,
         "random_seed": 1234,
     },
@@ -28,7 +29,6 @@
     "federated_learning": {
         "rounds": 100,
         "epochs": 5,
-        "batch_size": 10,
         "learning_rate": 0.01,
     },
     "paths" : {
