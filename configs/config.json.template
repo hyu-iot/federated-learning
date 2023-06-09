@@ -1,0 +1,10 @@
+{
+    "clients": {
+        "total": 10,
+        "per_round": 5,
+    },
+    "federated_learning": {
+        "rounds": 100
+    },
+    "model": "MNIST",
+}

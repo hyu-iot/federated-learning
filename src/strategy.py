@@ -14,4 +14,3 @@ strategies = {
 
 def get_strategy(strategy='FedAvg', config={}):
     return strategies[strategy.lower()](**config)
-

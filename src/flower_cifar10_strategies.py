@@ -37,7 +37,7 @@ result_path = "../result/result_strategies.csv"
 # General
 NUM_CLIENTS = 10
 BATCH_SIZE = 128
-num_rounds = 1
+num_rounds = 100
 
 
 print(
@@ -61,7 +61,8 @@ else:
     df_final = pd.DataFrame()
 
 
-net = Net().to(DEVICE)
+#net = Net().to(DEVICE)
+net = torchvision.models.vgg19(num_classes=10).to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.01,
                       momentum=0.9, weight_decay=5e-4)
@@ -109,8 +110,8 @@ def client_fn(cid: str) -> FlowerClient:
     global idx_fl_scale
 
     # Load model
-    net = Net().to(DEVICE)
-
+    #net = Net().to(DEVICE)
+    net = torchvision.models.vgg19(num_classes=10).to(DEVICE)
     trainloader = dl_client_train[int(cid)]
     valloader = dl_client_val[int(cid)]
 
@@ -123,7 +124,8 @@ def evaluate(
 ) -> Optional[Tuple[float, Dict[str, fl.common.Scalar]]]:
 
     criterion = nn.CrossEntropyLoss()
-    net = Net().to(DEVICE)
+    #net = Net().to(DEVICE)
+    net = torchvision.models.vgg19(num_classes=10).to(DEVICE)
     set_parameters(net, parameters)
     net = net.to(DEVICE)
     loss, metrics = test(DEVICE, net, dm.testloader, criterion)
@@ -159,10 +161,13 @@ config = {
     'min_available_clients':10,
     'evaluate_metrics_aggregation_fn':weighted_average,   # aggregate evaluation of local model
     'evaluate_fn':evaluate,   # evaluate global model
-    'initial_parameters':fl.common.ndarrays_to_parameters(get_parameters(Net())),
+    #'initial_parameters':fl.common.ndarrays_to_parameters(get_parameters(Net())),
+
+    'initial_parameters':fl.common.ndarrays_to_parameters(get_parameters(torchvision.models.vgg19(num_classes=10))),
 }
 
 strategies = ['FedAvg', 'FedAvgM', 'FedOpt']
+strategies = ['FedAvg', 'FedAvgM', 'FedOpt', 'FedProx', 'FedAdagrad']
 
 
 
@@ -195,4 +200,4 @@ for strategy in strategies:
 
     df_final = pd.concat([df_final, df_result], axis=0)
 
-#df_final.to_csv(result_path, index=False)
+df_final.to_csv(result_path, index=False)
