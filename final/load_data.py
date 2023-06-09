@@ -27,6 +27,7 @@ def get_full_dataset(config):
             ])
         full_trainset = CIFAR100("../dataset", train=True, download=True, transform=transform)
         testset = CIFAR100("../dataset", train=False, download=True, transform=transform)
+
     return full_trainset, testset
 
 def split_validation_set(config, full_trainset):

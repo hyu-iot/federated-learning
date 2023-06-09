@@ -1,0 +1,38 @@
+{
+    "clients": {
+        "total": 100,
+        "per_round": 20,
+        "validation_ratio": 0.1
+    },
+    "data": {
+        "target": "cifar10",
+        "batch_size": 32,
+        "IID": true,
+        "random_seed": 1234,
+    },
+    "model": {
+        "vgg19": {
+            "pretrained_path": "",
+            "args": {
+                "num_classes": 10,
+            }
+        },
+        "resnet50": {
+            "pretrained_path": "",
+            "args": {
+                "num_classes" : 10,
+            }
+        },
+    },
+    "strategy" : ["FedAvg", "FedAvgM", "FedOpt", "FedProx"],
+    "federated_learning": {
+        "rounds": 100,
+        "epochs": 5,
+        "learning_rate": 0.01,
+    },
+    "paths" : {
+        "data": "./data",
+        "models": "./models",
+    },
+    "server": "basic",
+}
