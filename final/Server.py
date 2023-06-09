@@ -3,6 +3,9 @@ import os
 from datetime import datetime
 from visualization import Visualization
 
+from load_data import DataManager
+
+
 class Server:
     def __init__(self, config):
         self.config = config
@@ -21,7 +24,21 @@ class Server:
 
 
     def load_data(self):
-        # print(self.config.models)
+        config = self.config
+
+        data_config = {
+            'dataset': config.data.dataset,
+            'batch_size': config.data.batch_size,
+            'remain_ratio': config.data.remain_ratio,
+            'validation_ratio': config.clients.validation_ratio,
+            'num_clients': config.clients.total,
+            'random_seed': config.data.random_seed,
+        }
+
+        dm = DataManager(**data_config)
+        self.trainloader, self.testloader, self.dl_clients, _ = dm.get_data()
+
+        print(self.config.models)
         pass
 
     # Make the dirctory named using the timestamp.
