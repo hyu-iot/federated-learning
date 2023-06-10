@@ -31,8 +31,64 @@ class Simulation_Unit(object):
     # def load_model(self):
     #     return load_model(**(self.config.model))
 
-
     def run(self):
+        if str(self.config.strategy).lower() == 'centralized':
+            self.run_centralized()
+        else:
+            self.run_fl()
+
+
+    def run_centralized(self):
+        run_config = self.config
+        net = self.model
+        DEVICE= self.device
+
+        train_config = {
+            "lr": run_config.fl.learning_rate,
+            "momentum": run_config.fl.momentum,
+            "weight_decay": run_config.fl.weight_decay
+        }        
+
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.SGD(net.parameters(), **train_config)
+        
+        best_acc = 0
+        
+        df_final = pd.DataFrame()
+        for epoch in range(1, run_config.fl.rounds + 1):
+            print(f"Epoch: {epoch}")
+            train(DEVICE, net, run_config.data['trainloader'], criterion, optimizer)
+            test_loss, metrics = test(DEVICE, net, run_config.data['testloader'], criterion)
+            if epoch % 10 == 0:
+                print(f"[Epoch {epoch}]", end="")
+                for k, v in metrics.items():
+                    print(f"{k}: {v}", end=" ")
+                print()
+            if best_acc < metrics['accuracy']:
+                print(f'Saving...(epoch {epoch})')
+                state = {
+                    'net': net.state_dict(),
+                    'acc': metrics['accuracy'],
+                    'epoch': epoch,
+                }
+                torch.save(state, os.path.join(run_config.paths['model'], "best_model.pth"))
+                best_acc = metrics['accuracy']
+            
+            df_result = pd.DataFrame()
+            df_result['round'] = epoch,
+            df_result['strategy'] = 'Central',
+            for k, v in metrics.items():
+                df_result[f"c_{k}"] = v
+            # df_result['c_loss'] = test_loss,
+            # df_result['c_accuracy'] = metrics['accuracy'],
+            df_result['d_accuracy'] = 0.0
+
+            df_final = pd.concat([df_final, df_result], axis=0)
+                       
+        df_result.to_csv(os.path.join(run_config.paths['result_dir'], 'result.csv'), index=False)
+
+
+    def run_fl(self):
         
         run_config = self.config
         net = self.model
