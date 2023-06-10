@@ -1,2 +1,6 @@
 **/dataset/**
 .vscode/**
+__pycache__/*
+result/*
+!result/result_total.csv
+dataset/
