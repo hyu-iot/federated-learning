@@ -123,15 +123,18 @@ class Simulation_Unit(object):
         df_result = pd.DataFrame()
         df_result['round'] = [i for i in range(1, config.fl.rounds + 1)]
         df_result['strategy'] = config.strategy     # TODO: change this line if the 'strategy' in config.json is modified to object shape
-        df_result['model'] = config.model.modelname
+        df_result['model'] = config.model['modelname']
 
         # centralized metrics
         metrics_cen = list(hist.metrics_centralized.keys())
         metrics_dis = list(hist.metrics_distributed.keys())
+
+        print(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
+        print(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
 
         for metric in metrics_cen:
             df_result[f"c_{metric}"] = [h[1] for h in hist.metrics_centralized[metric][1:]]
         for metric in metrics_dis:
             df_result[f"d_{metric}"] = [h[1] for h in hist.metrics_distributed[metric]]
 
-        df_result.to_csv(os.path.join(config.paths.result_dir, 'result.csv'), index=False)
+        df_result.to_csv(os.path.join(config.paths['result_dir'], 'result.csv'), index=False)
