@@ -35,7 +35,7 @@ The simulation will create results in the `./result` directory. It will create a
 * `.png` of the visualized graph.
 
 ## Visualization
-The visualization options will create a graph in a `png` file. The created graph shows the selected `metric` as the y-axis, and the rounds as the x-axis. You could check out how the `metric` changes as the rounds progressed.
+The visualization options will create a graph in a `.png` file. The created graph shows the selected `metric` as the y-axis, and the rounds as the x-axis. You could check out how the `metric` changes as the rounds progressed.
 
 
 # Configuration 
