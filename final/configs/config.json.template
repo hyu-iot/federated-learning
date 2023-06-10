@@ -41,5 +41,4 @@
         "strategy" : ["Centralized", "Federated"],
         "metrics" : ["f1-score", "accuracy"]
     },    
-    "server": "basic",
 }
