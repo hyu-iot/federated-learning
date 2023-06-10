@@ -30,9 +30,9 @@ python run.py
 ## Results
 The simulation will create results in the `./result` directory. It will create a directory using the timestamp when the simulation started. Inside the directory, you will have 3 results. 
 * Copy of the used `config.json`
-* `csv` file of the results of each model.
+* `.csv` file of the results of each model.
     * It will contain the `loss`, `accuracy`, `f1-score`, `precision`, and `recall` of each `model` and `strategy`.
-* `png` of the visualized graph.
+* `.png` of the visualized graph.
 
 ## Visualization
 The visualization options will create a graph in a `png` file. The created graph shows the selected `metric` as the y-axis, and the rounds as the x-axis. You could check out how the `metric` changes as the rounds progressed.
@@ -46,7 +46,7 @@ Use the provided example [`config.json`](final/configs/config.json.template) for
 
 ## Parameters 
 
-Configuration parameters are divided into the following nested sections within a `config.` file:
+Configuration parameters are divided into the following nested sections within a `config.json` file:
 
 * `clients`: Nested options pertaining to the clients.
   * `total`: `[positive integer]`, Number of total clients to be managed by server.
