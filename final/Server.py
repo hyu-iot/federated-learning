@@ -27,7 +27,12 @@ class Server:
         config = self.config
         for strategy in config.strategies:
             for modelname, model_config in config.models.items():
-                simunit = Simulation_Unit(self.__make_unit_simulation_config(strategy, modelname, model_config))
+                config.model = {"modelname": modelname, **model_config}
+                config.strategy = strategy
+                config.data = {"trainloader": self.trainloader, "testloader": self.testloader, "clients": self.dl_clients}
+                config.paths = {"models": "./models", "result_dir": self.mydir}
+                simunit = Simulation_Unit(config)
+                #simunit = Simulation_Unit(self.__make_unit_simulation_config(strategy, modelname, model_config))
                 simunit.run()
                 
         vis = Visualization(config, self.mydir)

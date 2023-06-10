@@ -1,7 +1,7 @@
 {
     "clients": {
-        "total": 100,
-        "per_round": 20,
+        "total": 2,
+        "per_round": 2,
         "validation_ratio": 0.1
     },
     "data": {
@@ -26,17 +26,17 @@
     },
     "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {
-        "rounds": 100,
-        "epochs": 5,
+        "rounds": 3,
+        "epochs": 1,
         "learning_rate": 0.01,
         "momentum": 0.09,
         "weight_decay": 5e-4,
         
         "fraction_fit":1.0,
         "fraction_evaluate":0.5,
-        "min_fit_clients":10,
-        "min_evaluate_clients":5,
-        "min_available_clients":10
+        "min_fit_clients":2,
+        "min_evaluate_clients":2,
+        "min_available_clients":2
     },
     
     "paths" : {
