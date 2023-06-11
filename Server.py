@@ -44,6 +44,7 @@ class Server:
 
         data_config = {
             'dataset': config.data.dataset,
+            'path': config.data.path,
             'batch_size': config.data.batch_size,
             'remain_ratio': config.data.remain_ratio,
             'validation_ratio': config.clients.validation_ratio,

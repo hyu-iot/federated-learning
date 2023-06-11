@@ -5,10 +5,11 @@ from torch.utils.data import DataLoader, random_split
 
 
 class DataManager():
-    def __init__(self, dataset='cifar10', batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
+    def __init__(self, dataset='cifar10', path="", batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
         self.dataset = dataset
         self.trainloader, self.testloader, self.dl_clients, self.remainset = self.__load_data(
             dataset=dataset,
+            path=path,
             batch_size=batch_size,
             remain_ratio=remain_ratio,
             validation_ratio=validation_ratio,
@@ -19,7 +20,13 @@ class DataManager():
     def get_data(self):
         return self.trainloader, self.testloader, self.dl_clients, self.remainset
 
-    def __load_data(self, dataset='cifar10', batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
+    def __load_data(self, dataset='cifar10', path='', batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
+
+        ## Custom Dataloader ##
+        if dataset == "custom":
+            custom_data = torch.load(path)
+            return custom_data['trainloader'], custom_data['testloader'], custom_data['dl_clients'], None
+
 
         load_func = {
             'cifar10': self.load_cifar10,
