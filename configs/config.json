@@ -11,6 +11,11 @@
         "random_seed": 1234
     },
     "model": {
+        "custom_model": {
+            "args": {
+                "path" : "./models/custom_model.py"
+            }
+        },
         "vgg19": {
             "pretrained_path": "",
             "args": {
@@ -23,6 +28,7 @@
                 "num_classes" : 10
             }
         }
+
     },
     "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {

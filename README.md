@@ -56,7 +56,7 @@ Configuration parameters are divided into the following nested sections within a
 
 * `data`: Nested options for how data is managed
   * `dataset`: `["cifar10", "cifar100"]`, Dataset used to train and test.
-  * `batch_size`: `[10]`, Size of data batch for each gradient update on a client.
+  * `batch_size`: `[positive integer]`, Size of data batch for each gradient update on a client.
   * `remain_ratio`: `[float between 0 and 1]`,TODO: need to update.
   * `random_seed`: `[positive integer]`, Seed for the random_split. Select when you want the seed to be fixed.
 * `model`: Nested options for the model structure to train.
