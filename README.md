@@ -42,7 +42,7 @@ The visualization options will create a graph in a `.png` file. The created grap
 
 This framework uses configuration files to manage the parameters of a simulation. These files, typically named `config.json`, are of JSON format and have specific keys for setting parameters.
 
-Use the provided example [`config.json`](final/configs/config.json.template) for reference.
+Use the provided example [`config.json`](configs/config.json.template) for reference.
 
 ## Parameters 
 
@@ -63,7 +63,6 @@ Configuration parameters are divided into the following nested sections within a
   * `[model_name:"densenet121", "mobilenet_v2", "googlenet", "resnet18", "resnet34", "resnet50", "vgg11", "vgg13", "vgg16", "vgg19"]`, Select model structure to train. The model is loaded by `torchvision.models`.
     *  `pretrained_path`: `[string]`, path of directory of the pretrained model to be used.
     *  `args`: Nested class of additional arguments used for the model.
-       *  `` //TODO: need to check.
 * `strategy`: `["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"]`, Strategies to compare. Single or multiple strategies may be selected.
 
 * `federated learning`: Specifications of federated learning task.
@@ -85,3 +84,16 @@ Configuration parameters are divided into the following nested sections within a
   * `model`: `["model.model_name"]`, Models to compare. It must only contain the model names from `model`'s `model_name` option. Single or multiple models are available.
   * `strategy`: `["strategy"]`, Strategies to compare. It must only contains strategies from `strategy` option. Single or multiple strategies are available.
   * `metrics`: `["loss", "accuracy", "f1-score", "precision", "recall"]`,  Metrics to visualize. Single or multiple metrics are available.
+
+# Custom Datasets and Models
+Custom datasets and custom models are appliable for test. 
+
+### Custom Dataset
+
+### Custom Models
+The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. However, there are some rules to follow.
+* File name of the `.py` must be `custom_model.py`
+* The main class name must be `CustomModel`
+* The user must match the input channels and output number labels in their own model. The framework cannot automatically do this. For example, if you are using CIFAR-10 dataset which has 3 input channels and 10 labels, you must apply it to your own model.
+  
+Use the provided example [`custom_model.py`](models/custom_model.py) for reference.
