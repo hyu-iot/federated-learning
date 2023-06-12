@@ -71,7 +71,7 @@ class Simulation_Unit(object):
                     'acc': metrics['accuracy'],
                     'epoch': epoch,
                 }
-                torch.save(state, os.path.join(run_config.paths['model'], "best_model.pth"))
+                torch.save(state, os.path.join(run_config.paths['result_dir'], "best_model.pth"))
                 best_acc = metrics['accuracy']
             
             df_result = pd.DataFrame()
