@@ -11,7 +11,7 @@ class Visualization:
 
     def run(self):
         # result_path = os.path.join(self.path, 'result.csv')
-        result_path = '/home/dongha/project/learning/final/result/result_total.csv' #TODO: FIX THIS.
+        result_path = '/home/dongha/project/learning/result/temp_result_total.csv' #TODO: FIX THIS.
         df_read = pd.read_csv(filepath_or_buffer=result_path)
 
         appended_df = pd.DataFrame()
