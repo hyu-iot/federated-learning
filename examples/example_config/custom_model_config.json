@@ -16,18 +16,11 @@
         "random_seed": 1234
     },
     "model": {
-        "vgg11": {
-            "pretrained_path": "",
+        "custom_model": {
             "args": {
-                "num_classes": 10
+                "path" : "./examples/custom_model.py"
             }
-        },
-        "resnet50": {
-            "pretrained_path": "",
-            "args": {
-                "num_classes" : 10
-            }
-        }
+        }  
     },
     "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {
@@ -50,7 +43,7 @@
     },
     "visualization" : {
         "only_visualization" : "null",
-        "model" : ["VGG19", "Resnet50"],
+        "model" : ["custom_model"],
         "strategy" : ["Centralized", "Federated"],
         "metrics" : ["f1-score", "accuracy"]
     }

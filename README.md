@@ -30,12 +30,12 @@ python run.py
 
 ## Results
 The simulation will create results in the `./result` directory. It will create a directory using the timestamp when the simulation started. Inside the directory, you will have 3 results. 
-* Copy of the used `config.json`
+* Copy of the used `config.json`.
 * `.csv` file of the results of each model.
     * It will contain the `loss`, `accuracy`, `f1-score`, `precision`, and `recall` of each `model` and `strategy`.
 * `.png` of the visualized graph.
 
-## Visualization
+# Visualization
 The visualization options will create a graph in a `.png` file. The created graph shows the selected `metric` as the y-axis, and the rounds as the x-axis. You could check out how the `metric` changes as the rounds progressed.
 
 Also only_visualization options are available. There are two options to activate it.
@@ -45,6 +45,31 @@ Also only_visualization options are available. There are two options to activate
 When either which option is on by passing the path, it will activate the visualization option. The results will be saved where the `.csv` file was saved.
 
 Try the provided example[`example_result.csv`](examples/example_result.csv) for reference.
+
+# Custom Datasets and Models
+Custom datasets and custom models are appliable for test. 
+
+### Custom Dataset
+The framework allows user to use their own dataset for simulation by putting the `custom_dataset.py` and `dataset` path `config.json`.
+
+There are some rules to follow.
+* The python file `.py` must be named `custom_dataset.py`.
+* The python class name must be `CustomDataset`.
+* The `CustomDataset` should inherit `torch.utils.data.Dataset` class.
+* The `config.json`'s `"data"`'s `"dataset"` must be named `"custom_dataset"`.
+* The user must pass the `custom_dataset.py` and `dataset` folder to `config.json`'s `"data"`'s `"custom_path"`'s `"py_path"` `"data_path"`.
+
+Use the provided example [`custom_dataset.py`](examples/custom_dataset.py), with  [`custom_dataset_config.json`](examples/example_config/custom_dataset_config.json)for reference.
+
+### Custom Models
+The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. 
+
+There are some rules to follow.
+* File name of the `.py` must be `custom_model.py`.
+* The main class name must be `CustomModel`.
+* The user must match the input channels and output number labels in their own model. The framework cannot automatically do this. For example, if you are using CIFAR-10 dataset which has 3 input channels and 10 labels, you must apply it to your own model.
+  
+Use the provided example [`custom_model.py`](examples/custom_model.py), with [`custom_model_config.json`](examples/example_config/custom_model_config.json) for reference.
 
 # Configuration 
 
@@ -62,7 +87,7 @@ Configuration parameters are divided into the following nested sections within a
   * `validation_ratio`: `[float between 0 and 1]`, Rate of the validation set from the train set. For instance, 0.1 means 10% of the train set will be used as the validation set.
 
 
-* `data`: Nested options for how data is managed
+* `data`: Nested options for how data is managed.
   * `dataset`: `["cifar10", "cifar100"]`, Dataset used to train and test.
   * `batch_size`: `[positive integer]`, Size of data batch for each gradient update on a client.
   * `remain_ratio`: `[float between 0 and 1]`,TODO: need to update.
@@ -89,25 +114,8 @@ Configuration parameters are divided into the following nested sections within a
   * `model`: `[string]`, Path to root model directory. Defaults to `./models`.
 
 * `visualization`: Nested options for visualization options.
-* "only_visualization" : false,
   * `only_visualization`: `[null/path]`, Option to skip training and only do visualization. If you do not want to turn on this option, enter `null`. This option is related to the command line option `--vis`, and it is defaultly `null`. To activate it, you must pass the path of the `result.csv` file.
   * `model`: `["model.model_name"]`, Models to compare. It must only contain the model names from `model`'s `model_name` option. Single or multiple models are available.
   * `strategy`: `["strategy"]`, Strategies to compare. It must only contains strategies from `strategy` option. Single or multiple strategies are available.
   * `metrics`: `["loss", "accuracy", "f1-score", "precision", "recall"]`,  Metrics to visualize. Single or multiple metrics are available.
 
-# Custom Datasets and Models
-Custom datasets and custom models are appliable for test. 
-
-### Custom Dataset
-The framework allows user to use their own dataset for simulation by putting the path of your dataloaders into the `config.json`.
-
-Right now, there are some rules to follow.
-* The file of custom dataloaders should be a dictionary type, which has `trainloader`, `testloader`, and `dl_clients` as a key. Each value of the corresponding key should be a dataloader for centralized training, a dataloader for testing, and a list of dataloaders that represents the dataloader of each FL client, respectively.
-
-### Custom Models
-The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. However, there are some rules to follow.
-* File name of the `.py` must be `custom_model.py`
-* The main class name must be `CustomModel`
-* The user must match the input channels and output number labels in their own model. The framework cannot automatically do this. For example, if you are using CIFAR-10 dataset which has 3 input channels and 10 labels, you must apply it to your own model.
-  
-Use the provided example [`custom_model.py`](models/custom_model.py) for reference.
