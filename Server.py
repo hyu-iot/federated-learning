@@ -19,8 +19,9 @@ class Server:
 
         logging.info('Starting...')
         
-        self.create_directory()
-        self.load_data()
+        if config.visualization['only_visualization'] == 'null':
+            self.create_directory()
+            self.load_data()
 
     def run(self):
         # self.iterate_simulation()
@@ -34,9 +35,6 @@ class Server:
                 simunit = Simulation_Unit(config)
                 #simunit = Simulation_Unit(self.__make_unit_simulation_config(strategy, modelname, model_config))
                 simunit.run()
-                
-        vis = Visualization(config, self.mydir)
-        vis.run()
 
 
     def load_data(self):

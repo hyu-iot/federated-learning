@@ -51,6 +51,7 @@
         "models": "./models"
     },
     "visualization" : {
+        "only_visualization" : "null",
         "model" : ["VGG19", "Resnet50"],
         "strategy" : ["Centralized", "Federated"],
         "metrics" : ["f1-score", "accuracy"]

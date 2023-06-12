@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+import logging
 
 class Visualization:
     def __init__(self, config, path):
@@ -10,8 +11,11 @@ class Visualization:
         self.path = path
 
     def run(self):
-        # result_path = os.path.join(self.path, 'result.csv')
-        result_path = '/home/dongha/project/learning/result/temp_result_total.csv' #TODO: FIX THIS.
+        if self.config.visualization['only_visualization'] == 'null':
+            result_path = os.path.join(self.path, 'result.csv')
+        else:
+            result_path = self.path
+        logging.info('Creating results in {}'.format(result_path.rsplit('/', 1)[0]))
         df_read = pd.read_csv(filepath_or_buffer=result_path)
 
         appended_df = pd.DataFrame()
@@ -64,4 +68,8 @@ class Visualization:
             ax.set_ylabel(key, fontsize=16)
 
             fig.set_dpi(300)
-            fig.savefig(self.path+"/"+key+"_plot.png", bbox_inches='tight')
+            if self.config.visualization['only_visualization'] == 'null':
+                fig.savefig(self.path+"/"+key+"_plot.png", bbox_inches='tight')
+            else:
+                save_path = self.path.rsplit('/', 1)[0]
+                fig.savefig(save_path+"/"+key+"_plot.png", bbox_inches='tight')

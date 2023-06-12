@@ -24,8 +24,9 @@ python run.py
 
 * `run.py` flags
 
-  * `--config` (`-c`): path to the configuration file to be used.
-  * `--log` (`-l`): level of logging info to be written to console, defaults to `INFO`.
+  * `--config` (`-c`): Path to the configuration file to be used.
+  * `--log` (`-l`): Level of logging info to be written to console, defaults to `INFO`.
+  * `--vis` (`-v`): Option to only execute visualization, defaults to `null`. To activate this option, pass the path of the `.csv` file resulted from previous training.
 
 ## Results
 The simulation will create results in the `./result` directory. It will create a directory using the timestamp when the simulation started. Inside the directory, you will have 3 results. 
@@ -37,6 +38,11 @@ The simulation will create results in the `./result` directory. It will create a
 ## Visualization
 The visualization options will create a graph in a `.png` file. The created graph shows the selected `metric` as the y-axis, and the rounds as the x-axis. You could check out how the `metric` changes as the rounds progressed.
 
+Also only_visualization options are available. There are two options to activate it.
+* Command line options with `--vis` or `-v` to activate it, and defaults to `null`, which means not turning it on. You must pass the path of the `.csv` file as the next argument to activate.
+* Entering the path into `config.json`. As same as command line options, you must pass the path of the `.csv` file.
+
+When either which option is on by passing the path, it will activate the visualization option. The results will be saved where the `.csv` file was saved.
 
 # Configuration 
 
@@ -81,6 +87,8 @@ Configuration parameters are divided into the following nested sections within a
   * `model`: `[string]`, Path to root model directory. Defaults to `./models`.
 
 * `visualization`: Nested options for visualization options.
+* "only_visualization" : false,
+  * `only_visualization`: `[null/path]`, Option to skip training and only do visualization. If you do not want to turn on this option, enter `null`. This option is related to the command line option `--vis`, and it is defaultly `null`. To activate it, you must pass the path of the `result.csv` file.
   * `model`: `["model.model_name"]`, Models to compare. It must only contain the model names from `model`'s `model_name` option. Single or multiple models are available.
   * `strategy`: `["strategy"]`, Strategies to compare. It must only contains strategies from `strategy` option. Single or multiple strategies are available.
   * `metrics`: `["loss", "accuracy", "f1-score", "precision", "recall"]`,  Metrics to visualize. Single or multiple metrics are available.
