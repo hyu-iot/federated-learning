@@ -24,12 +24,9 @@ class Simulation_Unit(object):
     def __init__(self, config):
         self.config = config
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        logging.info("Training on " + self.device.type)
         self.model = load_model(**(config.model)).to(self.device)
-        #self.model = load_model(modelname, **model_config).to(self.device)
-        
 
-    # def load_model(self):
-    #     return load_model(**(self.config.model))
 
     def run(self):
         if str(self.config.strategy).lower() == 'centralized':
@@ -56,16 +53,15 @@ class Simulation_Unit(object):
         
         df_final = pd.DataFrame()
         for epoch in range(1, run_config.fl.rounds + 1):
-            print(f"Epoch: {epoch}")
+            logging.info(f"Epoch: {epoch}")
             train(DEVICE, net, run_config.data['trainloader'], criterion, optimizer)
             test_loss, metrics = test(DEVICE, net, run_config.data['testloader'], criterion)
             if epoch % 10 == 0:
-                print(f"[Epoch {epoch}]", end="")
+                logging.info(f"[Epoch {epoch}]", end="")
                 for k, v in metrics.items():
-                    print(f"{k}: {v}", end=" ")
-                print()
+                    logging.info(f"{k}: {v}", end=" ")
             if best_acc < metrics['accuracy']:
-                print(f'Saving...(epoch {epoch})')
+                logging.info(f'Saving...(epoch {epoch})')
                 state = {
                     'net': net.state_dict(),
                     'acc': metrics['accuracy'],
@@ -185,8 +181,8 @@ class Simulation_Unit(object):
         metrics_cen = list(hist.metrics_centralized.keys())
         metrics_dis = list(hist.metrics_distributed.keys())
 
-        print(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
-        print(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
+        logging.info(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
+        logging.info(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
 
         for metric in metrics_cen:
             df_result[f"c_{metric}"] = [h[1] for h in hist.metrics_centralized[metric][1:]]

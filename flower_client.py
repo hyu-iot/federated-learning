@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import flwr as fl
 from flwr.common import Metrics
+import logging
 
 def get_parameters(net) -> List[np.ndarray]:
     return [val.cpu().numpy() for _, val in net.state_dict().items()]
@@ -27,7 +28,7 @@ def evaluate(
     # net = Net().to(DEVICE)
     set_parameters(net, parameters)  # Update model with the latest parameters
     loss, metrics = test(net, full_testloader) # Test total test_loader
-    print(f"Server-side evaluation loss {loss} / accuracy {metrics['accuracy']}")
+    logging.info(f"Server-side evaluation loss {loss} / accuracy {metrics['accuracy']}")
     return loss, metrics
 
 class FlowerClient(fl.client.NumPyClient):
@@ -47,7 +48,7 @@ class FlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         set_parameters(self.net, parameters)
         loss, metrics = test(self.net, self.valloader)
-        print(f"Accuracy {metrics['accuracy']}")
+        logging.info(f"Accuracy {metrics['accuracy']}")
         return float(loss), len(self.valloader), metrics
     
 def client_fn(cid: str) -> FlowerClient:

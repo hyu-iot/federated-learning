@@ -24,8 +24,8 @@ class Config(object):
         self.clients = namedtuple('clients', fields)(*params)
 
         # --- Data ---
-        fields = ['dataset', 'path', 'batch_size', 'remain_ratio', 'random_seed']
-        defaults = ('cifar10', '', 32, 0.0, 1234)
+        fields = ['dataset', 'path', 'custom_path','batch_size', 'remain_ratio', 'random_seed']
+        defaults = ('cifar10', '', '', 32, 0.0, 1234)
         params = [config['data'].get(field, defaults[i])
                   for i, field in enumerate(fields)]
         self.data = namedtuple('data', fields)(*params)

@@ -5,19 +5,18 @@
         "validation_ratio": 0.1
     },
     "data": {
-        "dataset": "cifar10",
+        "dataset": "custom_dataset",
         "path" : "",
+        "custom_path": {
+            "py_path" : "./examples/custom_dataset.py",
+            "data_path" : "./examples/example_dataset/"
+        },
         "batch_size": 32,
         "remain_ratio": 0.0,
         "random_seed": 1234
     },
     "model": {
-        "custom_model": {
-            "args": {
-                "path" : "./examples/custom_model.py"
-            }
-        },
-        "vgg19": {
+        "vgg11": {
             "pretrained_path": "",
             "args": {
                 "num_classes": 10
@@ -28,8 +27,12 @@
             "args": {
                 "num_classes" : 10
             }
-        }
-
+        },
+        "custom_model": {
+            "args": {
+                "path" : "./examples/custom_model.py"
+            }
+        }  
     },
     "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
     "federated_learning": {

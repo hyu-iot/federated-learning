@@ -4,6 +4,7 @@ import torchvision.models as models
 
 import importlib.util
 import sys
+import logging
 
 
 def load_model(modelname, args, pretrained_path=""):
@@ -14,7 +15,7 @@ def load_model(modelname, args, pretrained_path=""):
     
     if modelname in torchvision_models:
         model = getattr(models, modelname)(**args)
-        print("Training model: " + modelname)
+        logging.info("Training model: " + modelname)
     elif modelname == 'custom_model':
         spec = importlib.util.spec_from_file_location("custom_model", args['path'])
         foo = importlib.util.module_from_spec(spec)
@@ -22,7 +23,7 @@ def load_model(modelname, args, pretrained_path=""):
         spec.loader.exec_module(foo)
         model = foo.CustomModel()
     else:                   # Custom model
-        print("Unavailable model name.")
+        logging.info("Unavailable model name.")
         exit(1)
 
     if os.path.exists(pretrained_path):

@@ -3,13 +3,18 @@ import torchvision.transforms as transforms
 from torchvision.datasets import CIFAR10, CIFAR100
 from torch.utils.data import DataLoader, random_split
 
+import importlib.util
+import sys
+import logging
+
 
 class DataManager():
-    def __init__(self, dataset='cifar10', path="", batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
+    def __init__(self, dataset='cifar10', path="", custom_path="", batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
         self.dataset = dataset
         self.trainloader, self.testloader, self.dl_clients, self.remainset = self.__load_data(
             dataset=dataset,
             path=path,
+            custom_path = custom_path,
             batch_size=batch_size,
             remain_ratio=remain_ratio,
             validation_ratio=validation_ratio,
@@ -20,20 +25,24 @@ class DataManager():
     def get_data(self):
         return self.trainloader, self.testloader, self.dl_clients, self.remainset
 
-    def __load_data(self, dataset='cifar10', path='', batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
+    def __load_data(self, dataset='cifar10', path='', custom_path='', batch_size=32, remain_ratio=0, validation_ratio=0.1, num_clients=10, random_seed=1234):
 
         ## Custom Dataloader ##
-        if dataset == "custom":
-            custom_data = torch.load(path)
-            return custom_data['trainloader'], custom_data['testloader'], custom_data['dl_clients'], None
-
-
-        load_func = {
-            'cifar10': self.load_cifar10,
-            'cifar100' : self.load_cifar100,
-        }    
-
-        trainset, testset = load_func[dataset]()
+        if dataset == "custom_dataset":
+            spec = importlib.util.spec_from_file_location("custom_dataset", custom_path['py_path'])
+            foo = importlib.util.module_from_spec(spec)
+            sys.modules["module.name"] = foo
+            spec.loader.exec_module(foo)
+            trainset = foo.CustomDataset(path=custom_path['data_path'], train=True)
+            testset = foo.CustomDataset(path=custom_path['data_path'], train=False)
+        elif dataset == ('cifar10' or 'cifar100'):
+            load_func = {
+                'cifar10': self.load_cifar10,
+                'cifar100' : self.load_cifar100,
+            }    
+            trainset, testset = load_func[dataset]()
+        else:
+            logging.info("Unavailable dataset name.")
 
         trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
         testloader = DataLoader(testset, batch_size=batch_size, shuffle=True)
