@@ -89,6 +89,10 @@ Configuration parameters are divided into the following nested sections within a
 Custom datasets and custom models are appliable for test. 
 
 ### Custom Dataset
+The framework allows user to use their own dataset for simulation by putting the path of your dataloaders into the `config.json`.
+
+Right now, there are some rules to follow.
+* The file of custom dataloaders should has dictionary structure, which has `trainloader`, `testloader`, and `dl_clients` as a key. Each value of the corresponding key should be a dataloader for centralized training, a dataloader for testing, and a list of dataloaders that represents the dataloader of each FL client, respectively.
 
 ### Custom Models
 The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. However, there are some rules to follow.

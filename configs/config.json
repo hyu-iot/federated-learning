@@ -6,6 +6,7 @@
     },
     "data": {
         "dataset": "cifar10",
+        "path" : "",
         "batch_size": 32,
         "remain_ratio": 0.0,
         "random_seed": 1234
