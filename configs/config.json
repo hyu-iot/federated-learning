@@ -14,7 +14,7 @@
     "model": {
         "custom_model": {
             "args": {
-                "path" : "./models/custom_model.py"
+                "path" : "./examples/custom_model.py"
             }
         },
         "vgg19": {

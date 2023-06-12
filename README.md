@@ -44,11 +44,13 @@ Also only_visualization options are available. There are two options to activate
 
 When either which option is on by passing the path, it will activate the visualization option. The results will be saved where the `.csv` file was saved.
 
+Try the provided example[`example_result.csv`](examples/example_result.csv) for reference.
+
 # Configuration 
 
 This framework uses configuration files to manage the parameters of a simulation. These files, typically named `config.json`, are of JSON format and have specific keys for setting parameters.
 
-Use the provided example [`config.json`](configs/config.json.template) for reference.
+Use the provided template[`config.json`](configs/config.json.template) for reference. Also, there is an example [`config.json`](examples/config.json) in `examples/config.json`
 
 ## Parameters 
 
@@ -100,7 +102,7 @@ Custom datasets and custom models are appliable for test.
 The framework allows user to use their own dataset for simulation by putting the path of your dataloaders into the `config.json`.
 
 Right now, there are some rules to follow.
-* The file of custom dataloaders should has dictionary structure, which has `trainloader`, `testloader`, and `dl_clients` as a key. Each value of the corresponding key should be a dataloader for centralized training, a dataloader for testing, and a list of dataloaders that represents the dataloader of each FL client, respectively.
+* The file of custom dataloaders should be a dictionary type, which has `trainloader`, `testloader`, and `dl_clients` as a key. Each value of the corresponding key should be a dataloader for centralized training, a dataloader for testing, and a list of dataloaders that represents the dataloader of each FL client, respectively.
 
 ### Custom Models
 The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. However, there are some rules to follow.
