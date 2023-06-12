@@ -49,7 +49,7 @@ Try the provided example[`example_result.csv`](examples/example_result.csv) for 
 # Custom Datasets and Models
 Custom datasets and custom models are appliable for test. 
 
-### Custom Dataset
+## Custom Dataset
 The framework allows user to use their own dataset for simulation by putting the `custom_dataset.py` and `dataset` path `config.json`.
 
 There are some rules to follow.
@@ -59,9 +59,9 @@ There are some rules to follow.
 * The `config.json`'s `"data"`'s `"dataset"` must be named `"custom_dataset"`.
 * The user must pass the `custom_dataset.py` and `dataset` folder to `config.json`'s `"data"`'s `"custom_path"`'s `"py_path"` `"data_path"`.
 
-Use the provided example [`custom_dataset.py`](examples/custom_dataset.py), with  [`custom_dataset_config.json`](examples/example_config/custom_dataset_config.json)for reference.
+Use the provided example [`custom_dataset.py`](examples/custom_dataset.py), with  [`custom_dataset_config.json`](examples/example_config/custom_dataset_config.json) for reference.
 
-### Custom Models
+## Custom Models
 The only thing to train and test your model is to put the path of your `custom_model.py` into the `config.json`. 
 
 There are some rules to follow.
@@ -99,6 +99,7 @@ Configuration parameters are divided into the following nested sections within a
 * `strategy`: `["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"]`, Strategies to compare. Single or multiple strategies may be selected.
 
 * `federated learning`: Specifications of federated learning task.
+  * `centralized_epochs`: `[positive integer]`, Number of epochs of centralized learning to simulate.
   * `rounds`: `[positive integer]`, Number of rounds of federated learning to simulate.
   * `epochs`: `[positive integer]`, Number of epochs each client performs each round.
   * `learning_rate `: `[float between 0 and 1]`, Learning rate for training model.

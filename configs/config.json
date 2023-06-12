@@ -29,10 +29,11 @@
             }
         }
     },
-    "strategy" : ["Centralized", "FedAvg", "FedAvgM", "FedOpt", "FedProx"],
+    "strategy" : ["Centralized", "FedAvg"],
     "federated_learning": {
-        "rounds": 3,
-        "epochs": 1,
+        "centralized_epochs": 100,
+        "rounds": 10,
+        "epochs": 10,
         "learning_rate": 0.01,
         "momentum": 0.09,
         "weight_decay": 5e-4,
@@ -50,8 +51,8 @@
     },
     "visualization" : {
         "only_visualization" : "null",
-        "model" : ["VGG11", "Resnet50"],
-        "strategy" : ["Centralized", "Federated"],
+        "model" : ["vgg11", "resnet50"],
+        "strategy" : ["Centralized", "FedAvg"],
         "metrics" : ["f1-score", "accuracy"]
     }
 }

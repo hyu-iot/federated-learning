@@ -50,9 +50,9 @@ class Simulation_Unit(object):
         optimizer = optim.SGD(net.parameters(), **train_config)
         
         best_acc = 0
-        
+        result_path = os.path.join(run_config.paths['result_dir'], 'result.csv')
         df_final = pd.DataFrame()
-        for epoch in range(1, run_config.fl.rounds + 1):
+        for epoch in range(1, run_config.fl.centralized_epochs + 1):
             logging.info(f"Epoch: {epoch}")
             train(DEVICE, net, run_config.data['trainloader'], criterion, optimizer)
             test_loss, metrics = test(DEVICE, net, run_config.data['testloader'], criterion)
@@ -72,17 +72,17 @@ class Simulation_Unit(object):
             
             df_result = pd.DataFrame()
             df_result['round'] = epoch,
-            df_result['strategy'] = 'Central',
+            df_result['model'] = self.config.model['modelname'],
+            df_result['strategy'] = 'Centralized',
             for k, v in metrics.items():
                 df_result[f"c_{k}"] = v
-            # df_result['c_loss'] = test_loss,
-            # df_result['c_accuracy'] = metrics['accuracy'],
             df_result['d_accuracy'] = 0.0
 
             df_final = pd.concat([df_final, df_result], axis=0)
-                       
-        df_result.to_csv(os.path.join(run_config.paths['result_dir'], 'result.csv'), index=False)
-
+            if not os.path.exists(result_path):
+                df_result.to_csv(result_path, index=False, mode='w')
+            else:
+                df_result.to_csv(result_path, index=False, mode='a', header=False)
 
     def run_fl(self):
         
@@ -174,8 +174,8 @@ class Simulation_Unit(object):
         
         df_result = pd.DataFrame()
         df_result['round'] = [i for i in range(1, config.fl.rounds + 1)]
-        df_result['strategy'] = config.strategy     # TODO: change this line if the 'strategy' in config.json is modified to object shape
         df_result['model'] = config.model['modelname']
+        df_result['strategy'] = config.strategy     # TODO: change this line if the 'strategy' in config.json is modified to object shape
 
         # centralized metrics
         metrics_cen = list(hist.metrics_centralized.keys())
@@ -183,10 +183,12 @@ class Simulation_Unit(object):
 
         logging.info(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
         logging.info(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
-
+        result_path = os.path.join(config.paths['result_dir'], 'result.csv')
         for metric in metrics_cen:
             df_result[f"c_{metric}"] = [h[1] for h in hist.metrics_centralized[metric][1:]]
         for metric in metrics_dis:
             df_result[f"d_{metric}"] = [h[1] for h in hist.metrics_distributed[metric]]
-
-        df_result.to_csv(os.path.join(config.paths['result_dir'], 'result.csv'), index=False)
+        if not os.path.exists(result_path):
+            df_result.to_csv(result_path, index=False, mode='w')
+        else:
+            df_result.to_csv(result_path, index=False, mode='a', header=False)
