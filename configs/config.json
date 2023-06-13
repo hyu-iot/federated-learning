@@ -50,7 +50,7 @@
         "models": "./models"
     },
     "visualization" : {
-        "only_visualization" : "null",
+        "only_visualization" : "examples/example_result.csv",
         "model" : ["vgg11", "resnet50"],
         "strategy" : ["Centralized", "FedAvg"],
         "metrics" : ["f1-score", "accuracy"]

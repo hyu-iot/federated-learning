@@ -26,7 +26,6 @@ class Visualization:
 
         appended_df["name"] = df_read["model"] + "_" + df_read["strategy"]
         df_read.drop(columns=['model', 'strategy'], inplace=True)
-
         self.save_fig(appended_df)
 
         
