@@ -56,7 +56,7 @@
     "visualization" : {
         "only_visualization" : "null",
         "model" : ["VGG19", "Resnet50"],
-        "strategy" : ["Centralized", "Federated"],
+        "strategy" : ["Centralized", "FedAvg"],
         "metrics" : ["f1-score", "accuracy"]
     }
 }
