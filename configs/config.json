@@ -50,9 +50,9 @@
         "models": "./models"
     },
     "visualization" : {
-        "only_visualization" : "examples/example_result.csv",
-        "model" : ["vgg11", "resnet50"],
+        "only_visualization" : "examples/example/example_result.csv",
+        "model" : ["vgg11", "vgg19", "googlenet", "resnet50"],
         "strategy" : ["Centralized", "FedAvg"],
-        "metrics" : ["f1-score", "accuracy"]
+        "metrics" : ["f1-score", "loss", "accuracy"]
     }
 }
