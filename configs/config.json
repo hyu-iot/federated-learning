@@ -1,7 +1,7 @@
 {
     "clients": {
-        "total": 2,
-        "per_round": 2,
+        "total": 10,
+        "per_round": 5,
         "validation_ratio": 0.1
     },
     "data": {
@@ -32,8 +32,8 @@
     "strategy" : ["Centralized", "FedAvg"],
     "federated_learning": {
         "centralized_epochs": 100,
-        "rounds": 10,
-        "epochs": 10,
+        "rounds": 100,
+        "epochs": 1,
         "learning_rate": 0.01,
         "momentum": 0.09,
         "weight_decay": 5e-4,
@@ -44,14 +44,13 @@
         "min_evaluate_clients":2,
         "min_available_clients":2
     },
-    
     "paths" : {
         "data": "./data",
         "models": "./models"
     },
     "visualization" : {
-        "only_visualization" : "examples/example/example_result.csv",
-        "model" : ["vgg11", "vgg19", "googlenet", "resnet50"],
+        "only_visualization" : "null",
+        "model" : ["vgg11", "resnet50"],
         "strategy" : ["Centralized", "FedAvg"],
         "metrics" : ["f1-score", "loss", "accuracy"]
     }

@@ -26,7 +26,9 @@ class Simulation_Unit(object):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         logging.info("Training on " + self.device.type)
         self.model = load_model(**(config.model)).to(self.device)
-
+        self.moving_average_k = 7
+        self.moving_average = 0
+        self.losses = []
 
     def run(self):
         if str(self.config.strategy).lower() == 'centralized':
@@ -96,7 +98,6 @@ class Simulation_Unit(object):
             "weight_decay": run_config.fl.weight_decay
         }
 
-
         def client_fn(cid: str) -> FlowerClient:
             """Create a Flower client representing a single organization."""
             global idx_fl_scale
@@ -117,7 +118,17 @@ class Simulation_Unit(object):
             set_parameters(net, parameters)
             net = net.to(DEVICE)
             loss, metrics = test(DEVICE, net, run_config.data['testloader'], criterion)
+            logging.info(f"Server round: {server_round}")
             
+            # TODO: modify the acc and epoch
+            state = {
+                'net': net.state_dict(),
+                'acc': 0,
+                "epoch": -1,
+            }
+            if (server_round > 0):
+                torch.save(state, "./models/result_model.pth")
+
             return loss, metrics # The return type must be (loss, metric tuple) form
 
         def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
@@ -134,7 +145,6 @@ class Simulation_Unit(object):
             return averages
 
         
-
         # TODO : make this client_resources to be defined by config.json
         clinet_resources = None
         if DEVICE.type == "cuda":
@@ -157,18 +167,58 @@ class Simulation_Unit(object):
 
         # TODO: modify the following sentence.
         #       it should not do hard coding
-        target_config = {**strategy_config, 'proximal':0.1} if run_config.strategy == 'FedProx' else strategy_config
+        strategy_config = {**strategy_config, 'proximal':0.1} if run_config.strategy == 'FedProx' else strategy_config
 
-        hist = fl.simulation.start_simulation(
-            client_fn=client_fn,
-            num_clients=run_config.clients.total,
-            config=fl.server.ServerConfig(num_rounds=run_config.fl.rounds),
-            strategy=get_strategy(run_config.strategy, target_config),
-            client_resources=client_resources,
-        )
+        # TODO model load -> simulation for 1 round -> result save -> model save        
 
-        self.save_result(hist)
+        for i in range(1, 1+run_config.fl.rounds):
+            if (i > 1):
+                net = load_model(**({**(self.config.model), "pretrained_path":"./models/result_model.pth"})).to(self.device)
+            
+            target_config = {**strategy_config, 
+                'initial_parameters': fl.common.ndarrays_to_parameters(get_parameters(net))
+            }
+
+            hist = fl.simulation.start_simulation(
+                client_fn=client_fn,
+                num_clients=run_config.clients.total,
+                config=fl.server.ServerConfig(num_rounds=1),
+                strategy=get_strategy(run_config.strategy, target_config),
+                client_resources=client_resources,
+            )
+
+            self.save_result_2(hist, i)
+            if (self.check_saturation(hist)):    break
+
+        # hist = fl.simulation.start_simulation(
+        #     client_fn=client_fn,
+        #     num_clients=run_config.clients.total,
+        #     config=fl.server.ServerConfig(num_rounds=run_config.fl.rounds),
+        #     strategy=get_strategy(run_config.strategy, target_config),
+        #     client_resources=client_resources,
+        # )
+
+        # self.save_result(hist)
     
+    def check_saturation(self, hist):
+        
+        
+        # if (len(self.losses) > 0):
+        #     del self.losses[0]         # 
+        # else:
+        #     self.moving_average = 0     
+
+        current_loss = hist.metrics_centralized['loss'][1][1]
+        logging.info(f"Loss: {current_loss}")
+        self.losses.append(current_loss)
+
+        if (len(self.losses) >= self.moving_average_k):
+            self.moving_average = sum(self.losses[-self.moving_average_k:]) / self.moving_average_k
+            if (abs((self.moving_average - current_loss) / self.moving_average) < 0.01):
+                return True
+        
+        return False
+
     def save_result(self, hist):
         config = self.config
         
@@ -184,6 +234,32 @@ class Simulation_Unit(object):
         logging.info(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
         logging.info(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
         result_path = os.path.join(config.paths['result_dir'], 'result.csv')
+        for metric in metrics_cen:
+            df_result[f"c_{metric}"] = [h[1] for h in hist.metrics_centralized[metric][1:]]
+        for metric in metrics_dis:
+            df_result[f"d_{metric}"] = [h[1] for h in hist.metrics_distributed[metric]]
+        if not os.path.exists(result_path):
+            df_result.to_csv(result_path, index=False, mode='w')
+        else:
+            df_result.to_csv(result_path, index=False, mode='a', header=False)
+
+
+    def save_result_2(self, hist, current_round):
+        config = self.config
+
+        df_result = pd.DataFrame()
+        df_result['round'] =[current_round]
+        df_result['model'] = config.model['modelname']
+        df_result['strategy'] = config.strategy
+
+        # centralized metrcis
+        metrics_cen = list(hist.metrics_centralized.keys())
+        metrics_dis = list(hist.metrics_distributed.keys())
+
+        logging.info(f"MC_list: {metrics_cen}\nMD_list: {metrics_dis}")
+        logging.info(f"MC: {hist.metrics_centralized}\nMD: {hist.metrics_distributed}")
+        result_path = os.path.join(config.paths['result_dir'], 'result.csv')
+        
         for metric in metrics_cen:
             df_result[f"c_{metric}"] = [h[1] for h in hist.metrics_centralized[metric][1:]]
         for metric in metrics_dis:
